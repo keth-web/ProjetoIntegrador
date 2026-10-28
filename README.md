@@ -1,4 +1,7 @@
 # ProjetoIntegrador
-Sofia Omena
-Kethilly Karoline
-Vinicius Fantinel
+
+<ul>
+<li>Sofia Omena</li>
+<li> Kethilly Karoline</li>
+<li>Vinicius Fantinel</li>
+</ul>
