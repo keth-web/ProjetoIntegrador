@@ -1,0 +1,38 @@
+body{
+    background-color: #F5F6F4;
+      display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+.fl{
+    border-radius: 20px;
+    background-color: #fff;
+    width: 400px;
+    padding: 20px;
+    border: 2px solid #398B68;
+    box-sizing: border-box;
+    box-shadow: #D1D9D4 10px 10px 5px ;
+}
+.cfl{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between; 
+
+}
+h2{
+    color: #263C32;
+}
+img{
+    width: 30px;
+    height: auto;
+    overflow: hidden;
+    display: inline-block;
+      filter: drop-shadow(50px 0 0 #168A38 ); /* Substitua pela cor desejada */
+  transform: translateX(-50px); 
+
+}
+#reci{
+    width: 75px;
+}
