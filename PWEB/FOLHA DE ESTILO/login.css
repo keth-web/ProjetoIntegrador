@@ -1,3 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
 body{
     background-color: #F5F6F4;
       display: flex;
@@ -9,30 +14,54 @@ body{
 .fl{
     border-radius: 20px;
     background-color: #fff;
-    width: 400px;
+    width: min(400px,calc(100%-30%));
     padding: 20px;
     border: 2px solid #398B68;
     box-sizing: border-box;
-    box-shadow: #D1D9D4 10px 10px 5px ;
+    box-shadow: #D1D9D4 0px 8px 24px ;
+    
 }
 .cfl{
     display: flex;
     flex-direction: row-reverse;
-    justify-content: space-between; 
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 
 }
-h2{
-    color: #263C32;
+.cfl h1{
+    margin: 0;
+    color: #168a38;
+}
+.cfl h1 span{
+    color: #064e32;
+}
+.cfl h2{
+    margin: 0px;
+    color: #263c32;
+    font-size: 14px;
+}
+.divisor{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+.divisor span{
+    flex: 1;
+    height: 1px;
+    background-color: #398B68;
+}
+.divisor img{
+    width: 30px;
+    height: auto;
 }
 img{
     width: 30px;
     height: auto;
-    overflow: hidden;
-    display: inline-block;
-      filter: drop-shadow(50px 0 0 #168A38 ); /* Substitua pela cor desejada */
-  transform: translateX(-50px); 
-
 }
 #reci{
     width: 75px;
+    height: auto;
 }
