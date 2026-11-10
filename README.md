@@ -14,6 +14,14 @@
 <li>Vinicius Fantinel : Rotas e telas de listagem e de cadastro </li>
 </ul>
 
+# Cadastros Principais
+
+<ul >
+<li>Sofia Omena : Material </li>
+<li> Kethilly Karoline : Morador </li>
+<li>Vinicius Fantinel : Entrega </li>
+</ul>
+
 # Quadro de Tarefas
 M1 10/11
 <ul >
