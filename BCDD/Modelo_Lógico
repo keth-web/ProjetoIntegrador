@@ -5,6 +5,9 @@ PK cpf
 Usuario( nome_usua, email, end,cpf)  
 FK/PK cpf referencia Morador
 
+Usuario_ADM(cpf, cod_adm)
+FK/PK cpf referencia Morador
+
 Entrega(cod, hora, total_p, data) 
 PK cod
 
