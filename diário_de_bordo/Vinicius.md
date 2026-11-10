@@ -1,1 +1,1 @@
-
+ no dia 05/11 iniciei as folhas de estilo, apresentei uma certa dificuldade somente para relembrar e aplicar os conteúdos apreendidos no ultimo ano, porem nada que algumas vídeo aulas não pudessem resolver , 09/11 iniciei e terminei o UML. nao apresentei muitas difuldades.
