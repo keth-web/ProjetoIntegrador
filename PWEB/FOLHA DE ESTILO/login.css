@@ -2,6 +2,7 @@
 
 * {
     font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
 }
 body{
     background-color: #F5F6F4;
@@ -14,12 +15,16 @@ body{
 .fl{
     border-radius: 20px;
     background-color: #fff;
-    width: min(400px,calc(100%-30%));
+    width: 500px;
     padding: 20px;
     border: 2px solid #398B68;
-    box-sizing: border-box;
     box-shadow: #D1D9D4 0px 8px 24px ;
-    
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
 }
 .cfl{
     display: flex;
@@ -37,7 +42,7 @@ body{
     color: #064e32;
 }
 .cfl h2{
-    margin: 0px;
+    margin: 0;
     color: #263c32;
     font-size: 14px;
 }
@@ -47,6 +52,7 @@ body{
     justify-content: center;
     gap: 15px;
     margin: 20px 0;
+    width: 100%;
 }
 .divisor span{
     flex: 1;
@@ -64,4 +70,54 @@ img{
 #reci{
     width: 75px;
     height: auto;
+}
+.user,.pass{
+    border: 1px solid #398B68;
+    border-radius: 20px;
+    font-size: 14px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content:flex-end;
+    width: 100% ;
+    box-sizing: border-box;
+
+}
+.pass #snh{
+border: none;
+outline: none;
+flex: 1;
+min-width: 0;
+font-size: 14px;
+}
+
+.user #usr{
+ outline: none;
+ border: none;
+ flex: 1;
+ min-width: 0;
+ font-size: 14px;
+}
+.pass #olho{
+margin-left: auto ;
+cursor: pointer;
+}
+.entrar{
+    background-color: #168a38;
+    color: #fff;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px ;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s;
+    outline: none;
+    border: none;
+}
+.entrar:hover{
+    background-color: #064e32;
 }
