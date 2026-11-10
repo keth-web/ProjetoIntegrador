@@ -26,7 +26,6 @@
 M1 10/11
 <ul >
 <li>Sofia Omena : Modelo lógico e conceitual</li>
-<li> Kethilly Karoline : 
- modelo lógico e conceitual</li>
+<li> Kethilly Karoline : Modelo lógico e conceitual</li>
 <li>Vinicius Fantinel : Diagrama de classes</li>
 </ul>
