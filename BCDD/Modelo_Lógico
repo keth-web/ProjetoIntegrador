@@ -1,12 +1,12 @@
 TABELAS: 
-Morador(cpf , pontos,tel, nome) 
-PK cpf 
+Usuario(cpf ,tel, nome,email) 
+PK cpf
 
-Usuario( nome_usua, email, end,cpf)  
-FK/PK cpf referencia Morador
+Morador( nome_morador,end, pontos,cpf)
+cpf referencia Usuario
 
-Usuario_ADM(cpf, cod_adm, nome_adm)
-FK/PK cpf referencia Morador
+Usuario_ADM(cpf, nome_adm)
+cpf referencia Usuario
 
 Entrega(cod, hora, total_p, data) 
 PK cod
@@ -29,15 +29,14 @@ PK cod_m
 
 
 RELACIONAMENTO ENTRE AS TABELAS: 
-Morad_Usua(CPF , pontos,tel,nome,nome_usua,email,end) 
 
-Morador(cpf , pontos,tel, nome) 
+Usuario(cpf ,tel, nome,email) 
 Entrega(cod, hora, total_p, data, cpf) 
-*cpf referencia Morador 
+*cpf referencia Usuario 
 
-Morador(cpf , pontos,tel, nome) 
+Usuario(cpf ,tel, nome,email) 
 Resgate (cod_resg  , data,extrato, cpf) 
-*cpf referencia Morador 
+*cpf referencia Usuario
 
 Resgate(cod_resc, , data) 
 Recompensa(codr, registro_p, catalogo) 
