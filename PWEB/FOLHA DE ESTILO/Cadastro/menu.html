@@ -51,7 +51,31 @@
           <option value="Exemplo 3">Exemplo - Exemplo</option>
         </select>
       </div>
-    
+        
+    <div class="campo">
+        <label>Selecione o Material Reciclável:</label>
+        <select id="entMaterial" required></select>
+    </div>
+        
+      <div class="campo">
+        <label>Peso entregue em KG (deve ser maior que 0):</label>
+        <input type="number" id="entPeso" step="0.1" min="0.1" required placeholder="Ex: 2.5">
+      </div>
+
+      <button type="submit" class="btn-salvar">Cadastrar Entrega</button>
+    </form>
+
+         <h3>Minhas Entregas Registradas</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th><th>Ponto de Coleta</th><th>Material</th><th>Peso</th><th>Pontos Ganhos</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaEntregas"></tbody>
+    </table>
+     </div>
+         
 </main>
     
 </body>
