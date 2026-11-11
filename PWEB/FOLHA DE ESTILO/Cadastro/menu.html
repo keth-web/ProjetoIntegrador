@@ -75,7 +75,35 @@
       <tbody id="tabelaEntregas"></tbody>
     </table>
      </div>
-         
+
+<div id="resgatar" class="aba">
+    <h2>Solicitar Resgate de Recompensa</h2>
+    <form onsubmit="realizarResgate(event)">
+      <div class="campo">
+        <label>Selecione a Recompensa:</label>
+        <select id="selectRecompensa" required></select>
+      </div>
+      <button type="submit" class="btn-salvar">Confirmar Resgate</button>
+    </form>
+ <h3>Seus Resgates Efetuados</h3>
+    <table>
+      <thead>
+        <tr><th>Recompensa</th><th>Pontos Utilizados</th></tr>
+      </thead>
+      <tbody id="tabelaResgates"></tbody>
+    </table>
+</div>
+
+     <div id="extrato" class="aba">
+    <h2>Extrato de Pontos</h2>
+    <table>
+      <thead>
+        <tr><th>Tipo</th><th>Descrição</th><th>Pontos</th></tr>
+      </thead>
+      <tbody id="tabelaExtrato"></tbody>
+    </table>
+     </div>
+    
 </main>
     
 </body>
