@@ -29,7 +29,30 @@
   <button class="nav-btn" onclick="mostrarAba('resgatar', this)">3. Resgatar Recompensas</button>
   <button class="nav-btn" onclick="mostrarAba('extrato', this)">4. Extrato Completo</button>
                   </nav>
-<main></main>
+<main>
+    <div id="meu-saldo" class="aba ativa"> 
+    <h2>Saldo de Pontos Atual</h2>
+       <div class="card-saldo" >
+ <h3>Seu Saldo</h3>
+      <span id="saldoAtual">0 pts</span>         
+       </div> 
+          <p>Registre suas entregas de materiais recicláveis para acumular pontos trocáveis por recompensas!</p>
+    </div>
+
+     <div id="registrar-entrega" class="aba">
+    <h2>Registrar Nova Entrega</h2>
+    <form onsubmit="salvarEntrega(event)">
+      <div class="campo">
+        <label>Selecione o Ponto de Coleta:</label>
+        <select id="entPonto" required>
+          <option value="">-- Selecione o Ponto --</option>
+          <option value="Exemplo">Exemplo - Exemplo</option>
+          <option value="Exemplo 2">Exemplo - Exemplo</option>
+          <option value="Exemplo 3">Exemplo - Exemplo</option>
+        </select>
+      </div>
+    
+</main>
     
 </body>
 </html>
