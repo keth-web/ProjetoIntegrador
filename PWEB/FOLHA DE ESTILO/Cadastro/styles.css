@@ -175,4 +175,30 @@ input, select {
   font-weight: bold;
 }
 
+.btn-salvar:hover {
+  background-color: var(--verde-vibrante);
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  border: 1px solid var(--verde-claro);
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: var(--verde-profundo);
+  color: var(--branco);
+}
+
+tr:nth-child(even) {
+  background-color: var(--cinza-fundo);
+}
+
 
