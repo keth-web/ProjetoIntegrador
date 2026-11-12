@@ -180,6 +180,44 @@ let resgates = []
 
   document.getElementById("selectRecompensa").innerHTML = recompensaHTML;
         }
+        function salvarEntrega(event) {
+  event.preventDefault();
+
+  let ponto = document.getElementById("entPonto").value;
+  let id = Number(document.getElementById("entMaterial").value);
+  let peso = Number(document.getElementById("entPeso").value);
+
+  if (ponto == "" || id == 0 || peso <= 0) {
+    alert("Preencha todos os campos!");
+    return;
+  }
+
+  let material = null;
+
+  for (let i = 0; i < materiais.length; i++) {
+    if (materiais[i].id == id) {
+      material = materiais[i];
+    }
+  }
+              let pontos = Math.round(peso * material.pontos);
+
+  entregas.push({
+    data: new Date().toLocaleDateString("pt-BR"),
+    ponto: ponto,
+    material: material.nome,
+    peso: peso,
+    pontos: pontos
+  });
+
+  alert("Entrega registrada! Você ganhou " + pontos + " pontos.");
+
+  document.getElementById("entPonto").value = "";
+  document.getElementById("entMaterial").value = "";
+  document.getElementById("entPeso").value = "";
+
+  atualizarTelas();
+        }
+        
     </script>
 </body>
 </html>
