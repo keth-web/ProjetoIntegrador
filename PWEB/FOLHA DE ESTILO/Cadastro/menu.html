@@ -120,9 +120,21 @@ let recompensas = [
   {id: 4, nome: "Isenção da Taxa de Lixo", pontos: 80},
   {id: 5, nome: "Ingresso de Cinema", pontos: 40}
 ]
-        let entregas = [];
-let resgates = [];
-        
+        let entregas = []
+let resgates = []
+
+        function iniciarSessao() {
+  document.getElementById("userEmail").innerText =
+    "morador@cooprecicla.org.br"
+        }
+        function sair() {
+  alert("Você saiu da conta!")
+  location.reload()
+    }
+        function mostrarAba(id, botao) {
+  let abas = document.querySelectorAll(".aba")
+  let botoes = document.querySelectorAll(".nav-btn")
+            
     </script>
 </body>
 </html>
