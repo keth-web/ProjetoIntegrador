@@ -217,7 +217,36 @@ let resgates = []
 
   atualizarTelas();
         }
-        
+        function realizarResgate(event) {
+  event.preventDefault();
+
+  let id = Number(document.getElementById("selectRecompensa").value);
+  let recompensa = null;
+
+  for (let i = 0; i < recompensas.length; i++) {
+    if (recompensas[i].id == id) {
+      recompensa = recompensas[i];
+    }
+  }
+
+  if (recompensa == null) {
+    alert("Selecione uma recompensa!");
+    return;
+  }
+
+  if (calcularSaldo() < recompensa.pontos) {
+    alert("Você não possui pontos suficientes!");
+    return;
+  }
+
+  resgates.push(recompensa);
+
+  alert("Resgate realizado!");
+
+  document.getElementById("selectRecompensa").value = "";
+
+  atualizarTelas();
+}
     </script>
 </body>
 </html>
