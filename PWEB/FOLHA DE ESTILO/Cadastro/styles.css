@@ -110,4 +110,41 @@ header {
   font-weight: bold;
 }
 
+.menu-scroll button.ativo {
+  background-color: var(--verde-vibrante);
+}
+
+main {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: var(--branco);
+  border-radius: 8px;
+  border: 1px solid var(--verde-claro);
+}
+
+.aba {
+  display: none;
+}
+
+.aba.ativa {
+  display: block;
+}
+
+h2 {
+  color: var(--verde-escuro);
+  border-bottom: 2px solid var(--cinza-esverdeado);
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+.card-saldo {
+  background-color: var(--verde-escuro);
+  color: var(--branco);
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
 
