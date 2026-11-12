@@ -11,8 +11,8 @@ cpf referencia Usuario
 Entrega(cod, hora, total_p, data) 
 PK cod
 
-Resgate(cod_resc, , data) 
-PK cod_resc
+Resgate(cod_resg, , data) 
+PK cod_resg
 
 Recompensa(codr, registro_p, catalogo) 
 PK codr
