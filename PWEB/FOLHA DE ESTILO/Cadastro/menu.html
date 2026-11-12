@@ -134,7 +134,52 @@ let resgates = []
         function mostrarAba(id, botao) {
   let abas = document.querySelectorAll(".aba")
   let botoes = document.querySelectorAll(".nav-btn")
-            
+            for (let i = 0; i < abas.length; i++) {
+    abas[i].classList.remove("ativa");
+  }
+
+  for (let i = 0; i < botoes.length; i++) {
+    botoes[i].classList.remove("ativo");
+  }
+
+  document.getElementById(id).classList.add("ativa");
+  botao.classList.add("ativo");
+        }
+        function calcularSaldo() {
+  let saldo = 0;
+
+  for (let i = 0; i < entregas.length; i++) {
+    saldo += entregas[i].pontos;
+  }
+
+  for (let i = 0; i < resgates.length; i++) {
+    saldo -= resgates[i].pontos;
+  }
+
+  return saldo;
+        }
+        
+        function carregarOpcoes() {
+  let materialHTML = '<option value="">Selecione</option>';
+
+  for (let i = 0; i < materiais.length; i++) {
+    materialHTML += `<option value="${materiais[i].id}">
+      ${materiais[i].nome} (${materiais[i].pontos} pts/kg)
+    </option>`;
+  }
+
+  document.getElementById("entMaterial").innerHTML = materialHTML;
+
+  let recompensaHTML = '<option value="">Selecione</option>';
+
+  for (let i = 0; i < recompensas.length; i++) {
+    recompensaHTML += `<option value="${recompensas[i].id}">
+      ${recompensas[i].nome} (${recompensas[i].pontos} pts)
+    </option>`;
+  }
+
+  document.getElementById("selectRecompensa").innerHTML = recompensaHTML;
+        }
     </script>
 </body>
 </html>
