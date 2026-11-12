@@ -247,6 +247,51 @@ let resgates = []
 
   atualizarTelas();
 }
+        function atualizarTelas() {
+
+  document.getElementById("saldoAtual").innerText =
+    calcularSaldo() + " pts";
+
+  let entregasHTML = "";
+
+  for (let i = 0; i < entregas.length; i++) {
+    let e = entregas[i];
+
+    entregasHTML += `<tr>
+      <td>${e.data}</td>
+      <td>${e.ponto}</td>
+      <td>${e.material}</td>
+      <td>${e.peso} kg</td>
+      <td>+${e.pontos} pts</td>
+    </tr>`;
+  }
+
+  if (entregas.length == 0) {
+    entregasHTML = "<tr><td colspan='5'>Nenhuma entrega.</td></tr>";
+  }
+
+  document.getElementById("tabelaEntregas").innerHTML = entregasHTML;
+
+  let resgatesHTML = "";
+
+  for (let i = 0; i < resgates.length; i++) {
+    resgatesHTML += `<tr>
+      <td>${resgates[i].nome}</td>
+      <td>-${resgates[i].pontos} pts</td>
+    </tr>`;
+  } if (resgates.length == 0) {
+    resgatesHTML = "<tr><td colspan='2'>Nenhum resgate.</td></tr>";
+  }
+
+  document.getElementById("tabelaResgates").innerHTML = resgatesHTML;
+}
+window.onload = function() {
+  iniciarSessao();
+  carregarOpcoes();
+  atualizarTelas();
+};
+
+
     </script>
 </body>
 </html>
