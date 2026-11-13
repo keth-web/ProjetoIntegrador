@@ -2,7 +2,7 @@ create table item_entrega(
 cod_m varchar (9),
 cod_entrega varchar (9),
  codigoE varchar(9),
- kg decimal(5),
+ kg decimal(7,2) not null,
 primary key (codigoE),
 foreign key (cod_entrega) references entrega (cod_entrega),
 foreign key(cod_m) references material (cod_m)
