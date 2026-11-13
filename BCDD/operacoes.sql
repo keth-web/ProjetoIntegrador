@@ -15,7 +15,12 @@ foreign key (cpf) references Usuario (cpf),
 foreign key (id) references ponto_coleta (id)
 );
 
-
+create table recompensa(
+cod_recomp varchar (9),
+registro_pontos int,
+catalogo varchar(50),
+primary key (cod_recomp)
+);
 
 create table resgate(
 cpf varchar (11) not null,
@@ -26,12 +31,7 @@ foreign key (cpf) references Usuario (cpf)
 foreign key (cod_recomp) references recompensa(cod_recomp)
 );
 
-create table recompensa(
-cod_recomp varchar (9),
-registro_pontos int,
-catalogo varchar(50),
-primary key (cod_recomp)
-);
+
 
 insert into entrega (cpf, cod_entrega, hora, total_pontos, data_a, id) values
 ('12345678901', 'ENT000001', '08:30:00', 100, '2026-10-01', 1),
