@@ -23,6 +23,7 @@ cod_resg varchar(9),
 data_resg date,
 primary key(cod_resg),
 foreign key (cpf) references Usuario (cpf)
+foreign key (cod_recomp) references recompensa(cod_recomp)
 );
 
 create table recompensa(
