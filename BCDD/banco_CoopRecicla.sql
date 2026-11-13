@@ -11,9 +11,9 @@ email varchar(50) not null,
 primary key (cpf) 
 );
 create table if not exists Morador(
-cpf varchar(11),
-endereco varchar(100),
-pontos int,
+cpf varchar (11) not null ,
+endereco varchar(100) not null,
+pontos int not null default 0,
 primary key(cpf),
 foreign key(cpf) references Usuario (cpf)
 );
