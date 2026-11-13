@@ -1,4 +1,4 @@
-drop database if not exists CoopRecicla;
+
 create database CoopRecicla;
 use CoopRecicla;
 
@@ -27,7 +27,7 @@ foreign key(cpf)references Usuario(cpf)
 create table if not exists ponto_coleta(
 id int auto_increment,
 nome varchar(50),
-end varchar(100),
+endereco varchar(100),
 tel varchar (11),
 primary key (id)
 );
@@ -65,7 +65,7 @@ cod_recomp varchar (9) not null ,
 cod_resg varchar(9),
 data_resg date not null ,
 primary key(cod_resg),
-foreign key (cpf) references Morador (cpf)
+foreign key (cpf) references Morador (cpf),
 foreign key (cod_recomp) references recompensa(cod_recomp)
 );
 
@@ -98,7 +98,7 @@ insert into ADM values
 ('56789012345', TRUE),
 ('67890123456', FALSE);
 
-insert into ponto_coleta (nome, `end`, tel) values
+insert into ponto_coleta (nome, `endereco`, tel) values
 ('Eco Ponto Centro', 'Rua Principal, 100', '82999990001'),
 ('Recicla Mais', 'Av. Brasil, 250', '82999990002'),
 ('Ponto Verde', 'Rua das Flores, 50', '82999990003'),
@@ -119,12 +119,11 @@ insert into entrega (cpf, cod_entrega, hora, total_pontos, data_a, id) values
 ('45678901234', 'ENT000004', '11:30:00', 120, '2026-10-04', 4),
 ('56789012345', 'ENT000005', '14:00:00', 180, '2026-10-05', 5);
 
-insert into resgate (cpf, cod_resg, data_resg) values
-('12345678901', 'RES000001', '2026-10-06'),
-('23456789012', 'RES000002', '2026-10-07'),
-('34567890123', 'RES000003', '2026-10-08'),
-('45678901234', 'RES000004', '2026-10-09'),
-('56789012345', 'RES000005', '2026-10-10');
+insert into resgate (cpf, cod_recomp, cod_resg, data_resg) values
+('12345678901', 'REC000001', 'RES000001', '2026-10-06'),
+('23456789012', 'REC000002', 'RES000002', '2026-10-07'),
+('34567890123', 'REC000003', 'RES000003', '2026-10-08'),
+('45678901234', 'REC000004', 'RES000004', '2026-10-09');
 
 insert into recompensa (cod_recomp, registro_pontos, catalogo) values
 ('REC000001', 100, 'Garrafa reutilizável'),
