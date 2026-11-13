@@ -1,4 +1,4 @@
-
+drop database CoopRecicla;
 create database CoopRecicla;
 use CoopRecicla;
 
@@ -27,7 +27,7 @@ foreign key(cpf)references Usuario(cpf)
 create table if not exists ponto_coleta(
 id int auto_increment,
 nome varchar(50),
-endereco varchar(100),
+end varchar(100),
 tel varchar (11),
 primary key (id)
 );
@@ -93,12 +93,14 @@ insert into Morador values
 ('12345678901', 'Rua das Flores, 120', 150),
 ('23456789012', 'Av. Brasil, 250', 300),
 ('34567890123', 'Rua do Sol, 80', 200),
-('45678901234', 'Rua Verde, 45', 450);
+('45678901234', 'Rua Verde, 45', 450),
+('56789012345', 'Rua Nova, 200', 100);
+
 insert into ADM values
 ('56789012345', TRUE),
 ('67890123456', FALSE);
 
-insert into ponto_coleta (nome, `endereco`, tel) values
+insert into ponto_coleta (nome, `end`, tel) values
 ('Eco Ponto Centro', 'Rua Principal, 100', '82999990001'),
 ('Recicla Mais', 'Av. Brasil, 250', '82999990002'),
 ('Ponto Verde', 'Rua das Flores, 50', '82999990003'),
@@ -117,13 +119,7 @@ insert into entrega (cpf, cod_entrega, hora, total_pontos, data_a, id) values
 ('23456789012', 'ENT000002', '09:15:00', 150, '2026-10-02', 2),
 ('34567890123', 'ENT000003', '10:00:00', 200, '2026-10-03', 3),
 ('45678901234', 'ENT000004', '11:30:00', 120, '2026-10-04', 4),
-('56789012345', 'ENT000005', '14:00:00', 180, '2026-10-05', 5);
-
-insert into resgate (cpf, cod_recomp, cod_resg, data_resg) values
-('12345678901', 'REC000001', 'RES000001', '2026-10-06'),
-('23456789012', 'REC000002', 'RES000002', '2026-10-07'),
-('34567890123', 'REC000003', 'RES000003', '2026-10-08'),
-('45678901234', 'REC000004', 'RES000004', '2026-10-09');
+('12345678901', 'ENT000005', '14:00:00', 180, '2026-10-05', 5);
 
 insert into recompensa (cod_recomp, registro_pontos, catalogo) values
 ('REC000001', 100, 'Garrafa reutilizável'),
@@ -132,6 +128,14 @@ insert into recompensa (cod_recomp, registro_pontos, catalogo) values
 ('REC000004', 250, 'Muda de planta'),
 ('REC000005', 300, 'Caneca sustentável');
 
+insert into resgate (cpf, cod_recomp, cod_resg, data_resg) values
+('12345678901', 'REC000001', 'RES000001', '2026-10-06'),
+('23456789012', 'REC000002', 'RES000002', '2026-10-07'),
+('34567890123', 'REC000003', 'RES000003', '2026-10-08'),
+('45678901234', 'REC000004', 'RES000004', '2026-10-09'),
+('56789012345', 'REC000005', 'RES000005', '2026-10-10');
+
+
 insert into item_entrega (cod_m, cod_entrega, codigoE, kg) values
 ('MAT000001', 'ENT000001', 'ITE000001', 5.00),
 ('MAT000002', 'ENT000002', 'ITE000002', 3.00),
@@ -139,3 +143,6 @@ insert into item_entrega (cod_m, cod_entrega, codigoE, kg) values
 ('MAT000004', 'ENT000004', 'ITE000004', 2.00),
 ('MAT000005', 'ENT000005', 'ITE000005', 6.00);
 
+e;
+
+SELECT * FROM item_entrega;
