@@ -1,1 +1,3 @@
 Eu tive muitas dificuldades para  entender como era pra ser feito e organizado o trabalho. Me esqueci de muitos detalhes de assuntos passados , principalmente os que eu mais tinha dificuldade como DER. Minha maior dificuldade até o momento é ter que depender dos computadores do ifal, porque perco minha autonomia de querer fazer os ajustes no momento que quero.
+
+Eu não estou conseguindo lidar com esse trabalho, me sinto muito sobrecarregado com o curto prazo e porque preciso depender dos outros integrantes pra fazer as outras coisas. Eu fiz uma parte do banco e tô organizando o que falta ser feito , como as exigências do DQL, fazer as alterações na tela e no estilo do design.
