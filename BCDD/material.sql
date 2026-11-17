@@ -44,8 +44,8 @@ insert into material (tipo, ponto_kg, cod_m) values
 ('VID', 8, 'MAT000003'),
 ('LAT', 15, 'MAT000004'),
 ('PLA', 7, 'MAT000005');
-INSERT INTO ponto_coleta (nome, `end`, tel)
-VALUES ('Eco Reciclagem', 'Rua Nova, 200', '82999990006');
+insert into ponto_coleta (nome, `end`, tel)
+values ('Eco Reciclagem', 'Rua Nova, 200', '82999990006');
 
 
 select * from ponto_coleta;
