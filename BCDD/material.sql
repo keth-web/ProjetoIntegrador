@@ -44,3 +44,43 @@ insert into material (tipo, ponto_kg, cod_m) values
 ('VID', 8, 'MAT000003'),
 ('LAT', 15, 'MAT000004'),
 ('PLA', 7, 'MAT000005');
+INSERT INTO ponto_coleta (nome, `end`, tel)
+VALUES ('Eco Reciclagem', 'Rua Nova, 200', '82999990006');
+
+
+select * from ponto_coleta;
+select * from ponto_coleta
+where id = 1;
+
+update ponto_coleta
+set nome = 'Eco Ponto Atualizado',
+    `end` = 'Rua Nova, 300',
+    tel = '82999990007'
+where id = 1;
+
+delete from ponto_coleta
+where id = 6;
+
+insert into item_entrega (cod_m, cod_entrega, codigoE, kg)
+values ('MAT000001', 'ENT000001', 'ITE000006', 8.00);
+
+
+select * from item_entrega;
+select * from item_entrega
+where codigoE = 'ITE000001';
+
+update item_entrega
+set cod_m = 'MAT000002',
+    kg = 10.00
+where codigoE = 'ITE000001';
+
+
+delete from item_entrega
+where codigoE = 'ITE000006';
+
+select * from material;
+
+select * from ponto_coleta;
+
+select * from item_entrega;
+
