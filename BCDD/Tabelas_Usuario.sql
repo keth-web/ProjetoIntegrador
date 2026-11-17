@@ -37,3 +37,47 @@ insert into Morador values
 insert into ADM values
 ('56789012345', TRUE),
 ('67890123456', FALSE);
+insert into usuario values
+('78901234567', '82933334444', 'Carlos Alves', 'carlos@gmail.com');
+
+select * from usuario;
+
+update usuario
+set nome = 'Carlos Souza'
+where cpf = '78901234567';
+
+delete from usuario
+where cpf = '78901234567';
+
+
+insert into usuario values
+('78901234567', '82933334444', 'Carlos Alves', 'carlos@gmail.com');
+
+insert into morador values
+('78901234567', 'Rua Nova, 100', 100);
+
+select * from morador;
+
+update morador
+set endereco = 'Rua Nova, 200',
+pontos = 250
+where cpf = '78901234567';
+
+delete from morador
+where cpf = '78901234567';
+
+
+insert into usuario values
+('78901234567', '82933334444', 'Carlos Alves', 'carlos@gmail.com');
+
+insert into adm values
+('78901234567', true);
+
+select * from adm;
+
+update adm
+set status_adm = false
+where cpf = '78901234567';
+
+delete from adm
+where cpf = '78901234567';
