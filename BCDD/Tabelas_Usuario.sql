@@ -1,21 +1,21 @@
 CREATE DATABASE IF NOT EXISTS cooprecicla;
 use cooprecicla;
 
-create table(
+create table Usuario(
 cpf varchar(11) not null,
 tel varchar(11),
 nome varchar(100) not null,
 email varchar(50) not null,
 primary key (cpf) 
 );
-create table(
+create table Morador(
 cpf varchar (11) not null ,
 endereco varchar(100) not null,
 pontos int not null default 0,
 primary key(cpf),
 foreign key(cpf) references Usuario (cpf)
 );
-create table if not exists ADM(
+create table ADM(
 cpf varchar(11) not null,
 status_adm boolean not null default true,
 primary key(cpf),
