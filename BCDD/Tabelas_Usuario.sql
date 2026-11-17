@@ -16,7 +16,7 @@ primary key(cpf),
 foreign key(cpf) references Usuario (cpf)
 );
 create table if not exists ADM(
-cpf varchar(11),
+cpf varchar(11) not null,
 status_adm boolean not null default true,
 primary key(cpf),
 foreign key(cpf)references Usuario(cpf)
