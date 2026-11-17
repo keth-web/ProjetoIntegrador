@@ -11,8 +11,8 @@ hora time,
 total_pontos int,
 data_a date,
 primary key (cod_entrega),
-foreign key (cpf) references Usuario (cpf),
-foreign key (id) references ponto_coleta (id)
+--foreign key (cpf) references Usuario (cpf),
+--foreign key (id) references ponto_coleta (id)
 );
 
 create table recompensa(
@@ -27,7 +27,7 @@ cpf varchar (11) not null,
 cod_resg varchar(9),
 data_resg date,
 primary key(cod_resg),
-foreign key (cpf) references Usuario (cpf)
+--foreign key (cpf) references Usuario (cpf)
 foreign key (cod_recomp) references recompensa(cod_recomp)
 );
 
@@ -54,5 +54,30 @@ insert into recompensa (cod_recomp, registro_pontos, catalogo) values
 ('REC000004', 250, 'Muda de planta'),
 ('REC000005', 300, 'Caneca sustentável');
 
+insert into recompensa (cod_recomp, registro_pontos, catalogo) values
+('REC000011', 400, 'Lixeira reciclável');
 
+insert into entrega (cpf, cod_entrega, hora, total_pontos, data_a, id) values
+('12345678901', 'ENT000011', '16:00:00', 250, '2026-10-21', 1);
 
+update recompensa
+set registro_pontos = 450
+where cod_recomp = 'REC000001';
+
+update entrega
+set total_pontos = 300
+where cod_entrega = 'ENT000001';
+
+delete from resgate
+where cod_resg = 'RES000010';
+
+delete from entrega
+where cod_entrega = 'ENT000010';
+
+select * from Morador;
+
+select * from recompensa
+where registro_pontos > 150;
+
+select count(*) as total_entregas
+from entrega;
