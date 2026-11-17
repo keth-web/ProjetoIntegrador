@@ -25,7 +25,13 @@
 # Quadro de Tarefas
 M1 10/11
 <ul >
-<li>Sofia Omena : Modelo lógico e conceitual, entidades: item_entrega, ponto_coleta e material</li>
-<li> Kethilly Karoline : Modelo lógico e conceitual, entidades: entrega, recompensa, resgate</li>
-<li>Vinicius Fantinel : Diagrama de classes, entidades: usuario,morador,adm</li>
+<li>Sofia Omena : Modelo lógico e conceitual,</li>
+<li> Kethilly Karoline : Modelo lógico e conceitual</li>
+<li>Vinicius Fantinel : Diagrama de classes,</li>
+</ul>
+M1 17/11
+<ul>
+  <li> Sofia Omena: entidades: item_entrega, ponto_coleta e material</li>
+  <li>Kethilly Karoline : entidades: entrega, recompensa, resgate </li>
+  <li>Vinicius Fantinel :  usuario,morador,adm </li>
 </ul>
