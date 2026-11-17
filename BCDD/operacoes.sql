@@ -23,6 +23,7 @@ primary key (cod_recomp)
 );
 
 create table resgate(
+  cod_recomp varchar (9),
 cpf varchar (11) not null,
 cod_resg varchar(9),
 data_resg date,
@@ -40,19 +41,21 @@ insert into entrega (cpf, cod_entrega, hora, total_pontos, data_a, id) values
 ('45678901234', 'ENT000004', '11:30:00', 120, '2026-10-04', 4),
 ('56789012345', 'ENT000005', '14:00:00', 180, '2026-10-05', 5);
 
-insert into resgate (cpf, cod_resg, data_resg) values
-('12345678901', 'RES000001', '2026-10-06'),
-('23456789012', 'RES000002', '2026-10-07'),
-('34567890123', 'RES000003', '2026-10-08'),
-('45678901234', 'RES000004', '2026-10-09'),
-('56789012345', 'RES000005', '2026-10-10');
-
 insert into recompensa (cod_recomp, registro_pontos, catalogo) values
 ('REC000001', 100, 'Garrafa reutilizável'),
 ('REC000002', 150, 'Ecobag'),
 ('REC000003', 200, 'Kit de reciclagem'),
 ('REC000004', 250, 'Muda de planta'),
 ('REC000005', 300, 'Caneca sustentável');
+
+insert into resgate (cpf, cod_recomp, cod_resg, data_resg) values
+('12345678901', 'REC000001', 'RES000001', '2026-10-06'),
+('23456789012', 'REC000002', 'RES000002', '2026-10-07'),
+('34567890123', 'REC000003', 'RES000003', '2026-10-08'),
+('45678901234', 'REC000004', 'RES000004', '2026-10-09'),
+('56789012345', 'REC000005', 'RES000005', '2026-10-10');
+
+
 
 insert into recompensa (cod_recomp, registro_pontos, catalogo) values
 ('REC000011', 400, 'Lixeira reciclável');
@@ -69,12 +72,10 @@ set total_pontos = 300
 where cod_entrega = 'ENT000001';
 
 delete from resgate
-where cod_resg = 'RES000010';
+where cod_resg = 'RES000005';
 
 delete from entrega
-where cod_entrega = 'ENT000010';
-
-select * from Morador;
+where cod_entrega = 'ENT000005';
 
 select * from recompensa
 where registro_pontos > 150;
