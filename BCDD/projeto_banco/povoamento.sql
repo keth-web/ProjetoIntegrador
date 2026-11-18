@@ -26,7 +26,7 @@ insert into adm values
 ('56789012345', true),
 ('67890123456', false);
 
-insert into ponto_coleta (nome, "end", tel) values
+insert into ponto_coleta (nome, end, tel) values
 ('Eco Ponto Centro', 'Rua Principal, 100', '82999990001'),
 ('Recicla Mais', 'Av. Brasil, 250', '82999990002'),
 ('Ponto Verde', 'Rua das Flores, 50', '82999990003'),
