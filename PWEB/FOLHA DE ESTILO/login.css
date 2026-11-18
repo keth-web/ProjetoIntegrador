@@ -136,5 +136,7 @@ cursor: pointer;
     gap: 20px;
 }
 .cads{
-    font-size: 10px;
+    font-size: 20px;
+    color: #064e32;
+    text-decoration: none;
 }
