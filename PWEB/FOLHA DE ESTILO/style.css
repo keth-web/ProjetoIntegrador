@@ -1,0 +1,244 @@
+
+:root {
+    --verde-escuro: #045129;
+    --verde-vibrante: #259523;
+    --verde-profundo: #063623;
+    --verde-medio: #256641;
+    --verde-acinzentado: #609375;
+    --verde-claro: #ACCFB6;
+    --verde-suave: #7EA991;
+    --cinza-verde: #437C5D;
+    --branco: #FFFFFF;
+    --cinza: #F4F5F6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--cinza);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 15px;
+}
+
+.container {
+    width: 100%;
+    max-width: 850px;
+    background: var(--branco);
+    border: 2px solid var(--verde-medio);
+    border-radius: 18px;
+    padding: 35px;
+    box-shadow: 0 5px 20px rgba(6, 54, 35, 0.12);
+}
+
+.cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--verde-claro);
+}
+
+.logo h1 {
+    color: var(--verde-profundo);
+    font-size: 32px;
+}
+
+.logo h1 span {
+    color: var(--verde-vibrante);
+}
+
+.logo p {
+    color: var(--verde-profundo);
+    font-size: 14px;
+}
+
+.titulo {
+    text-align: right;
+}
+
+.titulo h2 {
+    color: var(--verde-profundo);
+    font-size: 25px;
+    margin-bottom: 8px;
+}
+
+.titulo p {
+    color: var(--verde-medio);
+    font-size: 14px;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.linha {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+label {
+    color: var(--verde-profundo);
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.obrigatorio {
+    color: red;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"] {
+    width: 100%;
+    padding: 13px 15px;
+    border: 1.5px solid var(--verde-medio);
+    border-radius: 9px;
+    font-size: 15px;
+    outline: none;
+    color: var(--verde-profundo);
+    background: var(--branco);
+}
+
+input:focus {
+    border-color: var(--verde-vibrante);
+    box-shadow: 0 0 4px var(--verde-claro);
+}
+
+input::placeholder {
+    color: #888;
+}
+
+.opcoes {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-top: 8px;
+}
+
+.opcao {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: normal;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+    accent-color: var(--verde-escuro);
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.termos {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    color: var(--verde-profundo);
+    font-size: 14px;
+}
+
+.termos a {
+    color: var(--verde-escuro);
+    font-weight: bold;
+}
+
+.botoes {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+button {
+    width: 230px;
+    padding: 14px;
+    border-radius: 30px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.voltar {
+    background: var(--branco);
+    border: 2px solid var(--verde-escuro);
+    color: var(--verde-escuro);
+}
+
+.voltar:hover {
+    background: var(--verde-claro);
+}
+
+.salvar {
+    background: var(--verde-escuro);
+    border: 2px solid var(--verde-escuro);
+    color: var(--branco);
+}
+
+.salvar:hover {
+    background: var(--verde-vibrante);
+    border-color: var(--verde-vibrante);
+}
+
+.rodape {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 18px;
+    border-top: 1px solid var(--verde-claro);
+    color: var(--verde-profundo);
+    font-style: italic;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 22px;
+    }
+
+    .cabecalho {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .titulo {
+        text-align: center;
+    }
+
+    .linha {
+        grid-template-columns: 1fr;
+    }
+
+    .botoes {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    .termos {
+        align-items: flex-start;
+    }
+}

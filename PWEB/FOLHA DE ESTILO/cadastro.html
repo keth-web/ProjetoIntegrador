@@ -1,0 +1,188 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro | CoopRecicla</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-layout">
+
+
+  <div class="auth-container">
+    <div class="auth-header">
+      <div class="logo">
+        <div class="logo-icon">♻️</div>
+        <div>
+          <h1 style="color: var(--verde-profundo);">Coop<span style="color: var(--verde-vibrante);">Recicla</span></h1>
+          <small style="color: var(--texto-secundario);">Cooperativa de Reciclagem</small>
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <h2>Criar Conta</h2>
+        <span style="font-size: 0.85rem; color: var(--texto-secundario);">Rede de coleta seletiva</span>
+      </div>
+    </div>
+
+
+    <form id="formCadastro" action="/usuarios/salvar" method="POST">
+      <!-- Seleção de Perfil conforme especialização Usuario -> Morador / ADM -->
+      <div class="campo">
+        <label>Tipo de Cadastro <span class="obrigatorio">*</span></label>
+        <div class="perfil-selector">
+          <label class="perfil-option">
+            <input type="radio" name="tipo_usuario" value="MORADOR" checked onchange="alternarPerfil()">
+            🏠 Morador (Coleta e Pontos)
+          </label>
+          <label class="perfil-option">
+            <input type="radio" name="tipo_usuario" value="ADM" onchange="alternarPerfil()">
+            🛡️ Administrador (Gestão)
+          </label>
+        </div>
+      </div>
+
+
+      <!-- Campos da tabela Usuario: cpf, nome, tel, email -->
+      <div class="grid-form">
+        <div class="campo full">
+          <label for="nome">Nome Completo <span class="obrigatorio">*</span></label>
+          <input type="text" id="nome" name="nome" maxlength="100" minlength="3" required placeholder="Ex: Maria da Silva">
+        </div>
+
+
+        <div class="campo">
+          <label for="cpf">CPF <span class="obrigatorio">*</span></label>
+          <input type="text" id="cpf" name="cpf" maxlength="14" required placeholder="000.000.000-00">
+        </div>
+
+
+        <div class="campo">
+          <label for="tel">Telefone (DDD + Número)</label>
+          <input type="tel" id="tel" name="tel" maxlength="15" placeholder="(82) 99999-9999">
+        </div>
+
+
+        <div class="campo full">
+          <label for="email">E-mail <span class="obrigatorio">*</span></label>
+          <input type="email" id="email" name="email" maxlength="50" required placeholder="seuemail@exemplo.com">
+        </div>
+
+
+        <!-- Campo exclusivo da tabela Morador: endereco (pontos inicia com default 0) -->
+        <div class="campo full" id="grupoEndereco">
+          <label for="endereco">Endereço Residencial <span class="obrigatorio">*</span></label>
+          <input type="text" id="endereco" name="endereco" maxlength="100" required placeholder="Rua, número, bairro e cidade">
+        </div>
+
+
+        <!-- Campo exclusivo da tabela ADM: status_adm -->
+        <div class="campo full" id="grupoAdm" style="display: none;">
+          <label for="status_adm">Status do Administrador</label>
+          <select id="status_adm" name="status_adm">
+            <option value="1" selected>Ativo (Acesso total ao sistema)</option>
+            <option value="0">Inativo (Aguardando aprovação)</option>
+          </select>
+        </div>
+      </div>
+
+
+      <div style="display: flex; align-items: center; gap: 10px; margin: 16px 0 24px; font-size: 0.88rem;">
+        <input type="checkbox" id="termos" required style="width: 17px; height: 17px; accent-color: var(--verde-escuro);">
+        <label for="termos" style="font-weight: 400;">Aceito os termos de uso e a política de privacidade da cooperativa.</label>
+      </div>
+
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button type="button" class="btn-secundario" onclick="window.location.href='menu.html'">← Ir para o Painel</button>
+        <button type="submit" class="btn-primario">Concluir Cadastro</button>
+      </div>
+    </form>
+
+
+    <div class="auth-footer">
+      Juntos por uma cidade mais limpa e sustentável 🌱
+    </div>
+  </div>
+
+
+  <script>
+    function alternarPerfil() {
+      const tipo = document.querySelector('input[name="tipo_usuario"]:checked').value;
+      const grupoEndereco = document.getElementById('grupoEndereco');
+      const inputEndereco = document.getElementById('endereco');
+      const grupoAdm = document.getElementById('grupoAdm');
+
+
+      if (tipo === 'MORADOR') {
+        grupoEndereco.style.display = 'flex';
+        inputEndereco.required = true;
+        grupoAdm.style.display = 'none';
+      } else {
+        grupoEndereco.style.display = 'none';
+        inputEndereco.required = false;
+        grupoAdm.style.display = 'flex';
+      }
+    }
+
+
+    // Máscara CPF (limpa erro anterior ao digitar e formata)
+    document.getElementById("cpf").addEventListener("input", function () {
+      this.setCustomValidity("");
+      let v = this.value.replace(/\D/g, "").slice(0, 11);
+      v = v.replace(/(\d{3})(\d)/, "$1.$2");
+      v = v.replace(/(\d{3})(\d)/, "$1.$2");
+      v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+      this.value = v;
+    });
+
+
+    // Máscara Telefone (varchar(11) no banco)
+    document.getElementById("tel").addEventListener("input", function () {
+      let v = this.value.replace(/\D/g, "").slice(0, 11);
+      if (v.length > 10) v = v.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+      else if (v.length > 6) v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+      else if (v.length > 2) v = v.replace(/(\d{2})(\d+)/, "($1) $2");
+      this.value = v;
+    });
+
+
+    // Valida apenas se possui 11 dígitos numéricos
+    function validarCPF(cpf) {
+      cpf = cpf.replace(/\D/g, "");
+      return cpf.length === 11;
+    }
+
+
+    document.getElementById("formCadastro").addEventListener("submit", function (event) {
+      const cpfInput = document.getElementById("cpf");
+      cpfInput.setCustomValidity("");
+
+
+      if (!validarCPF(cpfInput.value)) {
+        cpfInput.setCustomValidity("O CPF deve conter exatamente 11 dígitos.");
+        event.preventDefault();
+        this.reportValidity();
+        return;
+      }
+
+
+      // Simulação de persistência local para testar imediatamente no menu.html
+      event.preventDefault();
+      const dadosUsuario = {
+        cpf: cpfInput.value.replace(/\D/g, ""),
+        nome: document.getElementById("nome").value.trim(),
+        tel: document.getElementById("tel").value.replace(/\D/g, ""),
+        email: document.getElementById("email").value.trim(),
+        tipo: document.querySelector('input[name="tipo_usuario"]:checked').value,
+        endereco: document.getElementById("endereco").value.trim(),
+        pontos: 0
+      };
+      localStorage.setItem("coop_usuario_ativo", JSON.stringify(dadosUsuario));
+      alert("Cadastro realizado com sucesso!");
+      window.location.href = "menu.html";
+    });
+  </script>
+</body>
+</html>

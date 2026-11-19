@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário de Material | CoopRecicla</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-layout">
+
+  <div class="auth-container">
+    <div class="auth-header">
+      <div class="logo">
+        <div class="logo-icon">♻️</div>
+        <h1 style="color: var(--verde-profundo);">Coop<span style="color: var(--verde-vibrante);">Recicla</span></h1>
+      </div>
+      <h2 id="tituloForm">Novo Material</h2>
+    </div>
+
+    <div id="alertaBackend" style="display:none; background:#FEE2E2; border:1px solid #FCA5A5; color:#991B1B; padding:12px; border-radius:10px; margin-bottom:18px; font-size:0.9rem;"></div>
+
+    <form id="formMaterial" action="/salvarMaterial" method="POST">
+      <input type="hidden" id="modoEdicao" name="modoEdicao" value="novo">
+
+      <div class="grid-form">
+        <!-- Campo 1: PK cod_m varchar(9) -->
+        <div class="campo">
+          <label for="cod_m">Código do Material (cod_m) <span class="obrigatorio">*</span></label>
+          <input type="text" id="cod_m" name="cod_m" maxlength="9" required placeholder="Ex: MAT003">
+        </div>
+
+        <!-- Campo 2: tipo varchar(3) -->
+        <div class="campo">
+          <label for="tipo">Sigla / Tipo (até 3 letras) <span class="obrigatorio">*</span></label>
+          <input type="text" id="tipo" name="tipo" maxlength="3" minlength="2" required placeholder="Ex: PAP, VID, ALU" style="text-transform: uppercase;">
+        </div>
+
+        <!-- Campo 3: ponto_kg int -->
+        <div class="campo">
+          <label for="ponto_kg">Pontos por Kg (ponto_kg) <span class="obrigatorio">*</span></label>
+          <input type="number" id="ponto_kg" name="ponto_kg" min="1" step="1" required placeholder="Ex: 50">
+        </div>
+
+        <!-- Campo 4: Campo de seleção obrigatório (<select>) -->
+        <div class="campo">
+          <label for="categoria">Categoria de Triagem <span class="obrigatorio">*</span></label>
+          <select id="categoria" name="categoria" required>
+            <option value="">-- Selecione --</option>
+            <option value="METAL">Metais e Alumínio</option>
+            <option value="PLASTICO">Plásticos (PET / PEAD)</option>
+            <option value="PAPEL">Papel e Papelão</option>
+            <option value="VIDRO">Vidros</option>
+            <option value="OLEO">Óleo de Cozinha</option>
+          </select>
+        </div>
+
+        <!-- Campo 5: Descrição complementar -->
+        <div class="campo full">
+          <label for="descricao">Observações de Coleta <span class="obrigatorio">*</span></label>
+          <input type="text" id="descricao" name="descricao" maxlength="80" required placeholder="Ex: Entregar limpo e sem resíduos orgânicos">
+        </div>
+      </div>
+
+      <!-- Campo 6: Campo de checagem obrigatório (checkbox - regra de material desativado do Tema 7) -->
+      <div style="display: flex; align-items: center; gap: 10px; margin: 14px 0 22px; font-size: 0.9rem;">
+        <input type="checkbox" id="ativo" name="ativo" value="1" checked style="width:18px; height:18px; accent-color: var(--verde-escuro);">
+        <label for="ativo" style="font-weight: 500;">Material ativo (aceita novas entregas nos pontos de coleta)</label>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <button type="button" class="btn-secundario" onclick="window.location.href='listar-materiais.html'">
+          ← Voltar
+        </button>
+        <button type="submit" class="btn-primario">
+          💾 Salvar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has("erro")) {
+      const box = document.getElementById("alertaBackend");
+      box.textContent = "Erro ao salvar: " + params.get("erro");
+      box.style.display = "block";
+    }
+
+    if (params.has("cod_m")) {
+      document.getElementById("tituloForm").textContent = "Atualizar Material";
+      document.getElementById("modoEdicao").value = "editar";
+      const codInput = document.getElementById("cod_m");
+      codInput.value = params.get("cod_m");
+      codInput.readOnly = true;
+
+      if (params.get("cod_m") === "MAT001") {
+        document.getElementById("tipo").value = "ALU";
+        document.getElementById("ponto_kg").value = 120;
+        document.getElementById("categoria").value = "METAL";
+        document.getElementById("descricao").value = "Latinhas de alumínio amassadas e limpas";
+      }
+    }
+
+    document.getElementById("formMaterial").addEventListener("submit", function (e) {
+      const pontos = Number(document.getElementById("ponto_kg").value);
+      if (pontos <= 0) {
+        e.preventDefault();
+        alert("A pontuação por kg deve ser maior que zero.");
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entregas | CoopRecicla</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <div class="logo-icon">♻️</div>
+      <h1>Coop<span>Recicla</span></h1>
+    </div>
+    <div class="user-info">
+      <span class="user-badge" id="userEmail">usuario@email.com</span>
+      <button class="btn-sair" onclick="window.location.href='menu.html'">Voltar ao Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="card-painel">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+        <div>
+          <h2>Registro de Entregas</h2>
+          <p class="subtitulo-secao" style="margin: 0;">Histórico de materiais entregues pelos moradores nos pontos de coleta</p>
+        </div>
+        <!-- Botão Novo abre o formulário vazio -->
+        <button class="btn-primario" onclick="window.location.href='form-entrega.html'">+ Nova Entrega</button>
+      </div>
+
+      <div class="tabela-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Cód. Entrega</th>
+              <th>Morador (CPF)</th>
+              <th>Ponto de Coleta</th>
+              <th>Data / Hora</th>
+              <th>Total Pontos</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaEntregas">
+            <tr>
+              <td><strong>ENT000101</strong></td>
+              <td>12345678901 - Ana Clara</td>
+              <td>Ecoponto Ponta Verde</td>
+              <td>18/11/2026 às 09:30</td>
+              <td><span class="badge badge-entrada">+240 pts</span></td>
+              <td style="display: flex; gap: 6px;">
+                <button class="btn-secundario" style="padding: 6px 12px; font-size: 0.82rem;"
+                        onclick="window.location.href='form-entrega.html?cod_entrega=ENT000101'">
+                  Atualizar
+                </button>
+                <button class="btn-sair" style="padding: 6px 12px; font-size: 0.82rem;"
+                        onclick="confirmarExclusao('ENT000101')">
+                  Remover
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function confirmarExclusao(cod_entrega) {
+      if (confirm(`Deseja realmente remover a entrega "${cod_entrega}" e seus itens vinculados?`)) {
+        window.location.href = `/excluirEntrega?cod_entrega=${encodeURIComponent(cod_entrega)}`;
+      }
+    }
+  </script>
+</body>
+</html>

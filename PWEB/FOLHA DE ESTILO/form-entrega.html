@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário de Entrega | CoopRecicla</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-layout">
+
+  <div class="auth-container" style="max-width: 780px;">
+    <div class="auth-header">
+      <div class="logo">
+        <div class="logo-icon">♻️</div>
+        <h1 style="color: var(--verde-profundo);">Coop<span style="color: var(--verde-vibrante);">Recicla</span></h1>
+      </div>
+      <h2 id="tituloForm">Nova Entrega</h2>
+    </div>
+
+    <div id="alertaBackend" style="display:none; background:#FEE2E2; border:1px solid #FCA5A5; color:#991B1B; padding:12px; border-radius:10px; margin-bottom:18px; font-size:0.9rem;"></div>
+
+    <form id="formEntrega" action="/salvarEntrega" method="POST">
+      <input type="hidden" id="modoEdicao" name="modoEdicao" value="novo">
+
+      <div class="grid-form">
+        <!-- Campo 1: PK cod_entrega varchar(9) -->
+        <div class="campo">
+          <label for="cod_entrega">Código da Entrega (cod_entrega) <span class="obrigatorio">*</span></label>
+          <input type="text" id="cod_entrega" name="cod_entrega" maxlength="9" required placeholder="Ex: ENT000102">
+        </div>
+
+        <!-- Campo 2: FK cpf (Morador) -->
+        <div class="campo">
+          <label for="cpf">Morador (CPF) <span class="obrigatorio">*</span></label>
+          <select id="cpf" name="cpf" required>
+            <option value="">-- Selecione o Morador --</option>
+            <option value="12345678901">12345678901 - Ana Clara Souza</option>
+            <option value="98765432100">98765432100 - Carlos Eduardo Lima</option>
+          </select>
+        </div>
+
+        <!-- Campo 3: FK id (ponto_coleta) -->
+        <div class="campo full">
+          <label for="id">Ponto de Coleta (ponto_coleta) <span class="obrigatorio">*</span></label>
+          <select id="id" name="id" required>
+            <option value="">-- Selecione o Ponto de Coleta --</option>
+            <option value="1">1 - Ecoponto Ponta Verde</option>
+            <option value="2">2 - Cooperativa Benedito Bentes</option>
+          </select>
+        </div>
+
+        <!-- Campo 4: data_a date -->
+        <div class="campo">
+          <label for="data_a">Data da Entrega (data_a) <span class="obrigatorio">*</span></label>
+          <input type="date" id="data_a" name="data_a" required
+                 style="width:100%; padding:11px 14px; border:1.5px solid var(--cinza-borda); border-radius:var(--radius-md);">
+        </div>
+
+        <!-- Campo 5: hora time -->
+        <div class="campo">
+          <label for="hora">Hora da Entrega (hora) <span class="obrigatorio">*</span></label>
+          <input type="time" id="hora" name="hora" required
+                 style="width:100%; padding:11px 14px; border:1.5px solid var(--cinza-borda); border-radius:var(--radius-md);">
+        </div>
+      </div>
+
+      <!-- Bloco N:N item_entrega (cod_m + kg > 0) -->
+      <div style="background: var(--verde-menta); padding: 16px; border-radius: var(--radius-md); margin: 12px 0 18px;">
+        <label style="display: block; margin-bottom: 10px;">Itens da Entrega (item_entrega - N:N) <span class="obrigatorio">*</span></label>
+        <div class="grid-form-3">
+          <div class="campo" style="margin: 0;">
+            <label for="cod_m">Material (cod_m)</label>
+            <select id="cod_m">
+              <option value="MAT001" data-pontos="120" data-tipo="ALU">MAT001 - ALU (120 pts/kg)</option>
+              <option value="MAT002" data-pontos="60" data-tipo="PET">MAT002 - PET (60 pts/kg)</option>
+              <option value="MAT003" data-pontos="30" data-tipo="PAP">MAT003 - PAP (30 pts/kg)</option>
+            </select>
+          </div>
+          <div class="campo" style="margin: 0;">
+            <label for="kg">Peso em Kg (> 0)</label>
+            <input type="number" id="kg" step="0.01" min="0.01" placeholder="Ex: 2.00">
+          </div>
+          <button type="button" class="btn-secundario" onclick="adicionarItem()">+ Adicionar</button>
+        </div>
+
+        <div class="tabela-wrapper" id="boxItens" style="display: none; background: var(--branco); margin-top: 12px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Tipo</th>
+                <th>Peso (kg)</th>
+                <th>Pontos</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="listaItens"></tbody>
+          </table>
+        </div>
+
+        <div style="margin-top: 12px; text-align: right; font-weight: 700; color: var(--verde-profundo);">
+          Total Calculado (total_pontos): <span id="spanTotalPontos">0</span> pts
+          <input type="hidden" id="total_pontos" name="total_pontos" value="0">
+          <input type="hidden" id="itens_json" name="itens_json" value="[]">
+        </div>
+      </div>
+
+      <!-- Campo 6: Campo de checagem obrigatório (checkbox) -->
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 22px; font-size: 0.9rem;">
+        <input type="checkbox" id="conferido" name="conferido" value="1" required style="width:18px; height:18px; accent-color: var(--verde-escuro);">
+        <label for="conferido" style="font-weight: 500;">Pesagem conferida na balança do ponto de coleta <span class="obrigatorio">*</span></label>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <button type="button" class="btn-secundario" onclick="window.location.href='listar-entregas.html'">
+          ← Voltar
+        </button>
+        <button type="submit" class="btn-primario">
+          💾 Salvar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const itens = [];
+    const params = new URLSearchParams(window.location.search);
+
+    // Preenche data e hora atuais por padrão
+    const agora = new Date();
+    document.getElementById("data_a").value = agora.toISOString().split("T")[0];
+    document.getElementById("hora").value = agora.toTimeString().slice(0, 5);
+
+    if (params.has("erro")) {
+      const box = document.getElementById("alertaBackend");
+      box.textContent = "Erro ao salvar: " + params.get("erro");
+      box.style.display = "block";
+    }
+
+    if (params.has("cod_entrega")) {
+      document.getElementById("tituloForm").textContent = "Atualizar Entrega";
+      document.getElementById("modoEdicao").value = "editar";
+      const codInput = document.getElementById("cod_entrega");
+      codInput.value = params.get("cod_entrega");
+      codInput.readOnly = true;
+
+      if (params.get("cod_entrega") === "ENT000101") {
+        document.getElementById("cpf").value = "12345678901";
+        document.getElementById("id").value = "1";
+        itens.push({ cod_m: "MAT001", tipo: "ALU", kg: 2.0, pontos: 240 });
+        renderizarItens();
+      }
+    }
+
+    function adicionarItem() {
+      const select = document.getElementById("cod_m");
+      const opt = select.options[select.selectedIndex];
+      const kg = parseFloat(document.getElementById("kg").value);
+
+      if (isNaN(kg) || kg <= 0) {
+        alert("Regra de negócio: o peso de cada material deve ser maior que zero.");
+        return;
+      }
+
+      const pontoKg = Number(opt.getAttribute("data-pontos"));
+      const pontos = Math.round(kg * pontoKg);
+
+      itens.push({
+        cod_m: select.value,
+        tipo: opt.getAttribute("data-tipo"),
+        kg: kg,
+        pontos: pontos
+      });
+
+      document.getElementById("kg").value = "";
+      renderizarItens();
+    }
+
+    function removerItem(index) {
+      itens.splice(index, 1);
+      renderizarItens();
+    }
+
+    function renderizarItens() {
+      const box = document.getElementById("boxItens");
+      const tbody = document.getElementById("listaItens");
+
+      if (itens.length === 0) {
+        box.style.display = "none";
+        document.getElementById("spanTotalPontos").textContent = "0";
+        document.getElementById("total_pontos").value = "0";
+        document.getElementById("itens_json").value = "[]";
+        return;
+      }
+
+      box.style.display = "block";
+      tbody.innerHTML = itens.map((it, idx) => `
+        <tr>
+          <td>${it.cod_m}</td>
+          <td>${it.tipo}</td>
+          <td>${it.kg.toFixed(2)} kg</td>
+          <td>${it.pontos} pts</td>
+          <td><button type="button" class="btn-sair" style="padding: 4px 8px; font-size: 0.78rem;" onclick="removerItem(${idx})">X</button></td>
+        </tr>
+      `).join("");
+
+      const total = itens.reduce((soma, it) => soma + it.pontos, 0);
+      document.getElementById("spanTotalPontos").textContent = total;
+      document.getElementById("total_pontos").value = total;
+      document.getElementById("itens_json").value = JSON.stringify(itens);
+    }
+
+    document.getElementById("formEntrega").addEventListener("submit", function (e) {
+      if (itens.length === 0) {
+        e.preventDefault();
+        alert("Adicione pelo menos um material com peso maior que zero antes de salvar a entrega.");
+      }
+    });
+  </script>
+</body>
+</html>
