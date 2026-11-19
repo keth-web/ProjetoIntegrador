@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,9 +5,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro | CoopRecicla</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Estilos complementares para senha e requisitos */
+    .senha-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .senha-wrapper input {
+      width: 100%;
+      padding-right: 40px;
+    }
+
+    .btn-toggle-senha {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--texto-secundario, #666);
+      padding: 0;
+    }
+
+    .requisitos-senha {
+      list-style: none;
+      padding: 8px 12px;
+      margin: 6px 0 0;
+      background-color: rgba(0, 0, 0, 0.03);
+      border-radius: 6px;
+      font-size: 0.78rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 12px;
+    }
+
+    .requisitos-senha li {
+      color: #888;
+      transition: color 0.2s ease;
+    }
+
+    .requisitos-senha li.valido {
+      color: var(--verde-escuro, #1b5e20);
+      font-weight: 600;
+    }
+
+    .requisitos-senha li::before {
+      content: "○ ";
+    }
+
+    .requisitos-senha li.valido::before {
+      content: "✓ ";
+    }
+  </style>
 </head>
 <body class="auth-layout">
-
 
   <div class="auth-container">
     <div class="auth-header">
@@ -25,7 +76,6 @@
         <span style="font-size: 0.85rem; color: var(--texto-secundario);">Rede de coleta seletiva</span>
       </div>
     </div>
-
 
     <form id="formCadastro" action="/usuarios/salvar" method="POST">
       <!-- Seleção de Perfil conforme especialização Usuario -> Morador / ADM -->
@@ -43,46 +93,67 @@
         </div>
       </div>
 
-
-      <!-- Campos da tabela Usuario: cpf, nome, tel, email -->
+      <!-- Campos da tabela Usuario: cpf, nome, tel, email, senha -->
       <div class="grid-form">
         <div class="campo full">
           <label for="nome">Nome Completo <span class="obrigatorio">*</span></label>
           <input type="text" id="nome" name="nome" maxlength="100" minlength="3" required placeholder="Ex: Maria da Silva">
         </div>
 
-
         <div class="campo">
           <label for="cpf">CPF <span class="obrigatorio">*</span></label>
           <input type="text" id="cpf" name="cpf" maxlength="14" required placeholder="000.000.000-00">
         </div>
-
 
         <div class="campo">
           <label for="tel">Telefone (DDD + Número)</label>
           <input type="tel" id="tel" name="tel" maxlength="15" placeholder="(82) 99999-9999">
         </div>
 
-
         <div class="campo full">
           <label for="email">E-mail <span class="obrigatorio">*</span></label>
           <input type="email" id="email" name="email" maxlength="50" required placeholder="seuemail@exemplo.com">
         </div>
 
-
-        <!-- Campo exclusivo da tabela Morador: endereco (pontos inicia com default 0) -->
+        <!-- Campo exclusivo da tabela Morador: endereco -->
         <div class="campo full" id="grupoEndereco">
           <label for="endereco">Endereço Residencial <span class="obrigatorio">*</span></label>
           <input type="text" id="endereco" name="endereco" maxlength="100" required placeholder="Rua, número, bairro e cidade">
         </div>
-      </div>
 
+        <!-- Campos de Senha e Confirmação -->
+        <div class="campo">
+          <label for="senha">Senha <span class="obrigatorio">*</span></label>
+          <div class="senha-wrapper">
+            <input type="password" id="senha" name="senha" maxlength="50" required placeholder="Crie uma senha forte">
+            <button type="button" class="btn-toggle-senha" onclick="alternarVisibilidadeSenha('senha', this)" title="Mostrar/Ocultar senha">👁️</button>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="confirmar_senha">Confirmar Senha <span class="obrigatorio">*</span></label>
+          <div class="senha-wrapper">
+            <input type="password" id="confirmar_senha" name="confirmar_senha" maxlength="50" required placeholder="Repita a senha">
+            <button type="button" class="btn-toggle-senha" onclick="alternarVisibilidadeSenha('confirmar_senha', this)" title="Mostrar/Ocultar senha">👁️</button>
+          </div>
+        </div>
+
+        <!-- Checklist visual de requisitos da senha -->
+        <div class="campo full" style="margin-top: -8px;">
+          <ul class="requisitos-senha" id="listaRequisitos">
+            <li id="req-tamanho">Mínimo de 8 caracteres</li>
+            <li id="req-maiuscula">Uma letra maiúscula (A-Z)</li>
+            <li id="req-minuscula">Uma letra minúscula (a-z)</li>
+            <li id="req-numero">Um número (0-9)</li>
+            <li id="req-especial" style="grid-column: span 2;">Um caractere especial (!@#$%&*...)</li>
+          </ul>
+        </div>
+      </div>
 
       <div style="display: flex; align-items: center; gap: 10px; margin: 16px 0 24px; font-size: 0.88rem;">
         <input type="checkbox" id="termos" required style="width: 17px; height: 17px; accent-color: var(--verde-escuro);">
         <label for="termos" style="font-weight: 400;">Aceito os termos de uso e a política de privacidade da cooperativa.</label>
       </div>
-
 
       <div style="display: flex; gap: 12px; justify-content: flex-end;">
         <button type="button" class="btn-secundario" onclick="window.location.href='menu.html'">← Ir para o Painel</button>
@@ -90,34 +161,71 @@
       </div>
     </form>
 
-
     <div class="auth-footer">
       Juntos por uma cidade mais limpa e sustentável 🌱
     </div>
   </div>
-
 
   <script>
     function alternarPerfil() {
       const tipo = document.querySelector('input[name="tipo_usuario"]:checked').value;
       const grupoEndereco = document.getElementById('grupoEndereco');
       const inputEndereco = document.getElementById('endereco');
-      const grupoAdm = document.getElementById('grupoAdm');
-
 
       if (tipo === 'MORADOR') {
         grupoEndereco.style.display = 'flex';
         inputEndereco.required = true;
-        grupoAdm.style.display = 'none';
       } else {
         grupoEndereco.style.display = 'none';
         inputEndereco.required = false;
-        grupoAdm.style.display = 'flex';
       }
     }
 
+    // Mostrar / Ocultar senha
+    function alternarVisibilidadeSenha(idCampo, botao) {
+      const input = document.getElementById(idCampo);
+      if (input.type === "password") {
+        input.type = "text";
+        botao.textContent = "🙈";
+      } else {
+        input.type = "password";
+        botao.textContent = "👁️";
+      }
+    }
 
-    // Máscara CPF (limpa erro anterior ao digitar e formata)
+    // Validação em tempo real dos critérios da senha
+    const senhaInput = document.getElementById("senha");
+    const confirmarSenhaInput = document.getElementById("confirmar_senha");
+
+    function verificarRequisitosSenha(senha) {
+      const regras = {
+        tamanho: senha.length >= 8,
+        maiuscula: /[A-Z]/.test(senha),
+        minuscula: /[a-z]/.test(senha),
+        numero: /[0-9]/.test(senha),
+        especial: /[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/~`;']/.test(senha)
+      };
+
+      document.getElementById("req-tamanho").classList.toggle("valido", regras.tamanho);
+      document.getElementById("req-maiuscula").classList.toggle("valido", regras.maiuscula);
+      document.getElementById("req-minuscula").classList.toggle("valido", regras.minuscula);
+      document.getElementById("req-numero").classList.toggle("valido", regras.numero);
+      document.getElementById("req-especial").classList.toggle("valido", regras.especial);
+
+      return Object.values(regras).every(Boolean);
+    }
+
+    senhaInput.addEventListener("input", function () {
+      this.setCustomValidity("");
+      confirmarSenhaInput.setCustomValidity("");
+      verificarRequisitosSenha(this.value);
+    });
+
+    confirmarSenhaInput.addEventListener("input", function () {
+      this.setCustomValidity("");
+    });
+
+    // Máscara CPF
     document.getElementById("cpf").addEventListener("input", function () {
       this.setCustomValidity("");
       let v = this.value.replace(/\D/g, "").slice(0, 11);
@@ -127,8 +235,7 @@
       this.value = v;
     });
 
-
-    // Máscara Telefone (varchar(11) no banco)
+    // Máscara Telefone
     document.getElementById("tel").addEventListener("input", function () {
       let v = this.value.replace(/\D/g, "").slice(0, 11);
       if (v.length > 10) v = v.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
@@ -137,19 +244,18 @@
       this.value = v;
     });
 
-
-    // Valida apenas se possui 11 dígitos numéricos
     function validarCPF(cpf) {
       cpf = cpf.replace(/\D/g, "");
       return cpf.length === 11;
     }
 
-
     document.getElementById("formCadastro").addEventListener("submit", function (event) {
       const cpfInput = document.getElementById("cpf");
       cpfInput.setCustomValidity("");
+      senhaInput.setCustomValidity("");
+      confirmarSenhaInput.setCustomValidity("");
 
-
+      // 1. Valida CPF
       if (!validarCPF(cpfInput.value)) {
         cpfInput.setCustomValidity("O CPF deve conter exatamente 11 dígitos.");
         event.preventDefault();
@@ -157,8 +263,23 @@
         return;
       }
 
+      // 2. Valida requisitos de complexidade da senha
+      if (!verificarRequisitosSenha(senhaInput.value)) {
+        senhaInput.setCustomValidity("A senha deve ter no mínimo 8 caracteres, incluindo letra maiúscula, minúscula, número e caractere especial.");
+        event.preventDefault();
+        this.reportValidity();
+        return;
+      }
 
-      // Simulação de persistência local para testar imediatamente no menu.html
+      // 3. Valida se as senhas coincidem
+      if (senhaInput.value !== confirmarSenhaInput.value) {
+        confirmarSenhaInput.setCustomValidity("As senhas não coincidem.");
+        event.preventDefault();
+        this.reportValidity();
+        return;
+      }
+
+      // Simulação de persistência local
       event.preventDefault();
       const dadosUsuario = {
         cpf: cpfInput.value.replace(/\D/g, ""),
