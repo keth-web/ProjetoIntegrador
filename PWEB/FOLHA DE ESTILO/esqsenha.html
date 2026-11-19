@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Senha | CoopRecicla</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #eaf5ed;
+        }
+
+        .fl {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+
+        .cfl {
+            background: #ffffff;
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.10);
+            text-align: center;
+        }
+
+        .logo h1 {
+            font-size: 32px;
+            color: #247a43;
+        }
+
+        .logo h1 span {
+            color: #43a85f;
+        }
+
+        .logo p {
+            color: #777;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .conteudo {
+            margin-top: 35px;
+        }
+
+        .conteudo h2 {
+            color: #247a43;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .conteudo p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        label {
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        input:focus {
+            border-color: #43a85f;
+        }
+
+        button {
+            padding: 13px;
+            background: #29964c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #207a3d;
+        }
+
+        .voltar {
+            display: inline-block;
+            margin-top: 25px;
+            color: #29964c;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .voltar:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .cfl {
+                padding: 30px 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="fl">
+        <div class="cfl">
+
+            <div class="logo">
+                <h1><span>Coop</span>Recicla</h1>
+                <p>Reciclar transforma o futuro.</p>
+            </div>
+
+            <div class="conteudo">
+                <h2>Esqueceu sua senha?</h2>
+
+                <p>
+                    Não se preocupe! Informe seu e-mail cadastrado
+                    para receber as instruções de recuperação.
+                </p>
+
+                <form action="#" method="POST">
+
+                    <label for="email">E-mail</label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Digite seu e-mail"
+                        required
+                    >
+
+                    <button type="submit">
+                        Recuperar senha
+                    </button>
+
+                </form>
+
+                <a href="login.html" class="voltar">
+                    Voltar para o login
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
