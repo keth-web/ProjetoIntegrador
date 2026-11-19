@@ -1,0 +1,364 @@
+
+painel-adm.html
+100%
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo | CoopRecicla</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <div class="logo-icon">♻️</div>
+      <div>
+        <h1>Coop<span>Recicla</span> <small style="font-size: 0.75rem; background: var(--verde-vibrante); padding: 2px 8px; border-radius: 6px; margin-left: 6px;">ADM</small></h1>
+      </div>
+    </div>
+
+    <div class="user-info">
+      <div class="user-badge">
+        <span>🛡️</span>
+        <span id="userEmail">admin@cooprecicla.com</span>
+      </div>
+      <button class="btn-secundario" style="padding: 8px 14px; font-size: 0.85rem;" onclick="window.location.href='menu.html'">Menu Principal</button>
+      <button class="btn-sair" onclick="sair()">Sair</button>
+    </div>
+  </header>
+
+  <nav class="menu-scroll">
+    <button class="nav-btn ativo" onclick="mostrarSecaoAdm('sec-usuarios', this)">👥 Pessoas Cadastradas (Usuários/ADM)</button>
+    <button class="nav-btn" onclick="mostrarSecaoAdm('sec-pontos', this)">📍 Pontos de Coleta</button>
+    <button class="nav-btn" onclick="mostrarSecaoAdm('sec-recompensas', this)">🎁 Catálogo de Recompensas</button>
+    <button class="nav-btn" onclick="mostrarSecaoAdm('sec-relatorios', this)">📊 Relatórios Gerais (SQL)</button>
+  </nav>
+
+  <main>
+    <!-- INDICADORES GERAIS DO BANCO -->
+    <div class="grid-resumo">
+      <div class="card-saldo">
+        <small>Total de Usuários (Usuario)</small>
+        <div class="valor" id="statUsuarios">3</div>
+      </div>
+      <div class="card-stat">
+        <small>Pontos de Coleta Ativos</small>
+        <div class="valor" id="statPontos">2</div>
+      </div>
+      <div class="card-stat">
+        <small>Materiais & Recompensas</small>
+        <div class="valor" id="statItens">7</div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 1: GERENCIAMENTO DE PESSOAS CADASTRADAS (Usuario / Morador / ADM) -->
+    <section id="sec-usuarios" class="aba ativa">
+      <div class="card-painel">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <h2>Gerenciamento de Pessoas Cadastradas</h2>
+            <p class="subtitulo-secao" style="margin: 0;">Controle de contas das tabelas <strong>Usuario</strong>, <strong>Morador</strong> e <strong>ADM</strong></p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <select id="filtroPerfil" onchange="renderizarUsuarios()" style="width: auto;">
+              <option value="TODOS">Todos os Perfis</option>
+              <option value="MORADOR">Apenas Moradores</option>
+              <option value="ADM">Apenas Administradores</option>
+            </select>
+            <button class="btn-primario" onclick="window.location.href='cadastro.html'">+ Nova Pessoa</button>
+          </div>
+        </div>
+
+        <div class="tabela-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>CPF</th>
+                <th>Nome</th>
+                <th>E-mail / Telefone</th>
+                <th>Perfil</th>
+                <th>Detalhe (Endereço / Status ADM)</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaPessoas"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 2: GERENCIAMENTO DE PONTOS DE COLETA (ponto_coleta) -->
+    <section id="sec-pontos" class="aba">
+      <div class="card-painel">
+        <h2>Pontos de Coleta (ponto_coleta)</h2>
+        <p class="subtitulo-secao">Cadastre e gerencie os ecopontos disponíveis para entregas</p>
+
+        <form onsubmit="adicionarPonto(event)" class="grid-form" style="background: var(--verde-menta); padding: 16px; border-radius: var(--radius-md); margin-bottom: 18px;">
+          <div class="campo" style="margin: 0;">
+            <label for="pontoNome">Nome do Ponto <span class="obrigatorio">*</span></label>
+            <input type="text" id="pontoNome" maxlength="50" required placeholder="Ex: Ecoponto Jatiúca">
+          </div>
+          <div class="campo" style="margin: 0;">
+            <label for="pontoTel">Telefone (tel)</label>
+            <input type="text" id="pontoTel" maxlength="11" placeholder="82999990000">
+          </div>
+          <div class="campo full" style="margin: 0;">
+            <label for="pontoEnd">Endereço (end) <span class="obrigatorio">*</span></label>
+            <input type="text" id="pontoEnd" maxlength="100" required placeholder="Rua, número e bairro">
+          </div>
+          <div class="campo full" style="margin: 0; text-align: right;">
+            <button type="submit" class="btn-primario">+ Cadastrar Ponto de Coleta</button>
+          </div>
+        </form>
+
+        <div class="tabela-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Endereço</th>
+                <th>Telefone</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaPontos"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 3: CATÁLOGO DE RECOMPENSAS (recompensa) -->
+    <section id="sec-recompensas" class="aba">
+      <div class="card-painel">
+        <h2>Catálogo de Recompensas (recompensa)</h2>
+        <p class="subtitulo-secao">Itens disponíveis para troca pelos moradores com pontos acumulados</p>
+
+        <form onsubmit="adicionarRecompensa(event)" class="grid-form-3" style="background: var(--verde-menta); padding: 16px; border-radius: var(--radius-md); margin-bottom: 18px;">
+          <div class="campo" style="margin: 0;">
+            <label for="recCatalogo">Descrição / Catálogo (catalogo) <span class="obrigatorio">*</span></label>
+            <input type="text" id="recCatalogo" maxlength="50" required placeholder="Ex: Vale-Feira Orgânica R$ 30">
+          </div>
+          <div class="campo" style="margin: 0;">
+            <label for="recPontos">Pontos Necessários <span class="obrigatorio">*</span></label>
+            <input type="number" id="recPontos" min="1" required placeholder="Ex: 300">
+          </div>
+          <button type="submit" class="btn-primario">+ Adicionar Recompensa</button>
+        </form>
+
+        <div class="tabela-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Código (cod_recomp)</th>
+                <th>Item do Catálogo</th>
+                <th>Custo (registro_pontos)</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaRecompensas"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 4: RELATÓRIOS OBRIGATÓRIOS DO TEMA 7 (JOIN + GROUP BY) -->
+    <section id="sec-relatorios" class="aba">
+      <div class="card-painel">
+        <h2>Relatórios Gerenciais da Cooperativa</h2>
+        <p class="subtitulo-secao">Consultas consolidadas por material, ponto de coleta e participação dos moradores</p>
+
+        <div class="grid-form">
+          <div>
+            <h3 style="margin-top: 0;">Volume Coletado por Material</h3>
+            <div class="tabela-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Material</th>
+                    <th>Total Coletado</th>
+                    <th>Pontos Gerados</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>ALU (Alumínio)</td><td>142,5 kg</td><td>17.100 pts</td></tr>
+                  <tr><td>PET (Plástico)</td><td>310,0 kg</td><td>18.600 pts</td></tr>
+                  <tr><td>PAP (Papelão)</td><td>520,0 kg</td><td>15.600 pts</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h3 style="margin-top: 0;">Moradores Mais Participativos</h3>
+            <div class="tabela-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Morador</th>
+                    <th>Entregas</th>
+                    <th>Saldo Atual</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Ana Clara Souza</td><td>12</td><td>340 pts</td></tr>
+                  <tr><td>Carlos Eduardo Lima</td><td>9</td><td>210 pts</td></tr>
+                  <tr><td>Mariana Alves</td><td>7</td><td>185 pts</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Dados simulados baseados nas tabelas Usuario, Morador, ADM, ponto_coleta e recompensa
+    const pessoas = [
+      { cpf: "12345678901", nome: "Ana Clara Souza", email: "ana@email.com", tel: "82999887766", perfil: "MORADOR", detalhe: "Rua das Palmeiras, 45 - Farol", saldo: 340 },
+      { cpf: "98765432100", nome: "Carlos Eduardo Lima", email: "carlos@email.com", tel: "82988776655", perfil: "MORADOR", detalhe: "Av. Fernandes Lima, 1200", saldo: 210 },
+      { cpf: "11122233344", nome: "Gestor Cooperativa", email: "admin@cooprecicla.com", tel: "8233221100", perfil: "ADM", detalhe: "Status ADM: Ativo", status_adm: true }
+    ];
+
+    const pontos = [
+      { id: 1, nome: "Ecoponto Ponta Verde", end: "Av. Álvaro Otacílio, 400", tel: "8233221100" },
+      { id: 2, nome: "Cooperativa Benedito Bentes", end: "Av. Cachoeira do Meirim, 85", tel: "8233445566" }
+    ];
+
+    const recompensas = [
+      { cod_recomp: "REC001", catalogo: "Ecobag CoopRecicla", registro_pontos: 150 },
+      { cod_recomp: "REC002", catalogo: "Kit Mudas Orgânicas", registro_pontos: 100 },
+      { cod_recomp: "REC003", catalogo: "Vale-Compras R$ 25,00", registro_pontos: 400 }
+    ];
+
+    function mostrarSecaoAdm(idSecao, btn) {
+      document.querySelectorAll(".aba").forEach(s => s.classList.remove("ativa"));
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("ativo"));
+      document.getElementById(idSecao).classList.add("ativa");
+      btn.classList.add("ativo");
+    }
+
+    function renderizarUsuarios() {
+      const filtro = document.getElementById("filtroPerfil").value;
+      const filtrados = filtro === "TODOS" ? pessoas : pessoas.filter(p => p.perfil === filtro);
+
+      document.getElementById("statUsuarios").textContent = pessoas.length;
+      document.getElementById("tabelaPessoas").innerHTML = filtrados.map((p, idx) => `
+        <tr>
+          <td><strong>${p.cpf}</strong></td>
+          <td>${p.nome}</td>
+          <td>${p.email}<br><small style="color:var(--texto-secundario);">${p.tel}</small></td>
+          <td>
+            <span class="badge ${p.perfil === 'ADM' ? 'badge-saida' : 'badge-entrada'}">
+              ${p.perfil}
+            </span>
+          </td>
+          <td>${p.detalhe} ${p.perfil === 'MORADOR' ? `(<strong>${p.saldo} pts</strong>)` : ''}</td>
+          <td style="display: flex; gap: 6px;">
+            <button class="btn-secundario" style="padding: 6px 10px; font-size: 0.8rem;"
+                    onclick="window.location.href='form-morador.html?cpf=${p.cpf}'">
+              Editar
+            </button>
+            <button class="btn-sair" style="padding: 6px 10px; font-size: 0.8rem;"
+                    onclick="removerPessoa(${idx})">
+              Remover
+            </button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function removerPessoa(index) {
+      const pessoa = pessoas[index];
+      if (confirm(`Remover o usuário "${pessoa.nome}" (CPF: ${pessoa.cpf}) do sistema?`)) {
+        pessoas.splice(index, 1);
+        renderizarUsuarios();
+      }
+    }
+
+    function renderizarPontos() {
+      document.getElementById("statPontos").textContent = pontos.length;
+      document.getElementById("tabelaPontos").innerHTML = pontos.map((pt, idx) => `
+        <tr>
+          <td>#${pt.id}</td>
+          <td><strong>${pt.nome}</strong></td>
+          <td>${pt.end}</td>
+          <td>${pt.tel || '-'}</td>
+          <td>
+            <button class="btn-sair" style="padding: 6px 10px; font-size: 0.8rem;" onclick="removerPonto(${idx})">
+              Remover
+            </button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function adicionarPonto(e) {
+      e.preventDefault();
+      pontos.push({
+        id: pontos.length + 1,
+        nome: document.getElementById("pontoNome").value.trim(),
+        end: document.getElementById("pontoEnd").value.trim(),
+        tel: document.getElementById("pontoTel").value.trim()
+      });
+      e.target.reset();
+      renderizarPontos();
+    }
+
+    function removerPonto(index) {
+      if (confirm(`Excluir o ponto de coleta "${pontos[index].nome}"?`)) {
+        pontos.splice(index, 1);
+        renderizarPontos();
+      }
+    }
+
+    function renderizarRecompensas() {
+      document.getElementById("statItens").textContent = recompensas.length + 4;
+      document.getElementById("tabelaRecompensas").innerHTML = recompensas.map((rec, idx) => `
+        <tr>
+          <td><strong>${rec.cod_recomp}</strong></td>
+          <td>${rec.catalogo}</td>
+          <td><span class="badge badge-entrada">${rec.registro_pontos} pts</span></td>
+          <td>
+            <button class="btn-sair" style="padding: 6px 10px; font-size: 0.8rem;" onclick="removerRecompensa(${idx})">
+              Remover
+            </button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function adicionarRecompensa(e) {
+      e.preventDefault();
+      recompensas.push({
+        cod_recomp: "REC" + String(recompensas.length + 1).padStart(3, "0"),
+        catalogo: document.getElementById("recCatalogo").value.trim(),
+        registro_pontos: Number(document.getElementById("recPontos").value)
+      });
+      e.target.reset();
+      renderizarRecompensas();
+    }
+
+    function removerRecompensa(index) {
+      if (confirm(`Remover a recompensa "${recompensas[index].catalogo}" do catálogo?`)) {
+        recompensas.splice(index, 1);
+        renderizarRecompensas();
+      }
+    }
+
+    function sair() {
+      document.cookie = "usuario_email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "logado=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      window.location.href = "login.html";
+    }
+
+    // Inicializa as tabelas
+    renderizarUsuarios();
+    renderizarPontos();
+    renderizarRecompensas();
+  </script>
+</body>
+</html>
