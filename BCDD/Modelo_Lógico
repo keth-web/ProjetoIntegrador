@@ -5,7 +5,7 @@ PK cpf
 Morador( nome_morador,end, pontos,cpf)
 cpf referencia Usuario
 
-Usuario_ADM(cpf, nome_adm)
+Usuario_ADM(cpf, status_adm)
 cpf referencia Usuario
 
 Entrega(cod, hora, total_p, data) 
