@@ -1,9 +1,11 @@
 
 class Entrega {
+#cpf
+    #cod_entrega
     constructor(id, cpf, cod_entrega, hora, total_pontos, data_a) {
         this.id = id;
-        this.cpf = cpf;
-        this.cod_entrega = cod_entrega;
+        this.#cpf = cpf;
+        this.#cod_entrega = cod_entrega;
         this.hora = hora;
         this.total_pontos = total_pontos;
         this.data_a = data_a;
@@ -18,11 +20,11 @@ class Entrega {
     }
 
     getCpf() {
-        return this.cpf;
+        return this.#cpf;
     }
 
     setCpf(cpf) {
-        this.cpf = cpf;
+        this.#cpf = cpf;
     }
 
     getCod_entrega() {
@@ -30,7 +32,7 @@ class Entrega {
     }
 
     setCod_entrega(cod_entrega) {
-        this.cod_entrega = cod_entrega;
+        this.#cod_entrega = cod_entrega;
     }
 
     getHora() {
@@ -58,11 +60,11 @@ class Entrega {
     }
 
     validar() {
-    if (!this.cpf || this.cpf.length !== 11) {
+    if (!this.#cpf || this.#cpf.length !== 11) {
         throw new Error('CPF deve possuir 11 caracteres.');
     }
 
-    if (!this.cod_entrega || this.cod_entrega.length > 9) {
+    if (!this.#cod_entrega || this.#cod_entrega.length > 9) {
         throw new Error('Código da entrega inválido.');
     }
 
