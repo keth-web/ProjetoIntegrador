@@ -1,34 +1,38 @@
 
 class Usuario {
+    #cpf
+    #tel
+    #nome
+    #email
     constructor(cpf, tel, nome, email) {
-        this.cpf = cpf;
-        this.tel = tel;
-        this.nome = nome;
-        this.email = email;
+        this.#cpf = cpf;
+        this.#tel = tel;
+        this.#nome = nome;
+        this.#email = email;
     }
 
     getCpf() {
-        return this.cpf;
+        return this.#cpf;
     }
 
     setCpf(cpf) {
-        this.cpf = cpf;
+        this.#cpf = cpf;
     }
 
     getTel() {
-        return this.tel;
+        return this.#tel;
     }
 
     setTel(tel) {
-        this.tel = tel;
+        this.#tel = tel;
     }
 
     getNome() {
-        return this.nome;
+        return this.#nome;
     }
 
     setNome(nome) {
-        this.nome = nome;
+        this.#nome = nome;
     }
 
     getEmail() {
