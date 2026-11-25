@@ -1,5 +1,5 @@
 
-const db = require('./conexao');
+const db = require('../../PWEB/BACK-END/conexao');
 
 class MaterialDAO {
 

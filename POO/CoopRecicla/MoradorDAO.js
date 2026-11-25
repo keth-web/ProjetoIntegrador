@@ -1,6 +1,4 @@
-
-const db = require('./conexao');
-
+const db = require('../../PWEB/BACK-END/conexao');
 class MoradorDAO {
 
     cadastrar(morador, callback) {

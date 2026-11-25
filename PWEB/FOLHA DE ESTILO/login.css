@@ -1,53 +1,60 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 * {
     font-family: 'Poppins', sans-serif;
     box-sizing: border-box;
 }
-body{
+
+body {
     background-color: #F5F6F4;
-      display: flex;
+    display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
     color: #064e32;
 }
-.fl{
+
+.fl {
     border-radius: 20px;
     background-color: #fff;
     width: 500px;
+    max-width: 95%;
     padding: 20px;
     border: 2px solid #398B68;
-    box-shadow: #D1D9D4 0px 8px 24px ;
-
+    box-shadow: #D1D9D4 0px 8px 24px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 5px;
 }
-.cfl{
+
+.cfl {
     display: flex;
     flex-direction: row-reverse;
     justify-content: center;
     align-items: center;
     gap: 10px;
-
 }
-.cfl h1{
+
+.cfl h1 {
     margin: 0;
     color: #168a38;
 }
-.cfl h1 span{
+
+.cfl h1 span {
     color: #064e32;
 }
-.cfl h2{
+
+.cfl h2 {
     margin: 0;
     color: #263c32;
     font-size: 14px;
 }
-.divisor{
+
+.divisor {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -55,60 +62,82 @@ body{
     margin: 20px 0;
     width: 100%;
 }
-.divisor span{
+
+.divisor span {
     flex: 1;
     height: 1px;
     background-color: #398B68;
 }
-.divisor img{
+
+.divisor img {
     width: 30px;
     height: auto;
 }
-img{
+
+img {
     width: 30px;
     height: auto;
 }
-#reci{
+
+#reci {
     width: 75px;
     height: auto;
 }
-.user,.pass{
+
+.user,
+.pass {
     border: 1px solid #398B68;
     border-radius: 20px;
     font-size: 14px;
     padding: 12px;
     display: flex;
     align-items: center;
-    justify-content:flex-end;
-    width: 100% ;
+    width: 100%;
     box-sizing: border-box;
-
-}
-.pass #snh{
-border: none;
-outline: none;
-flex: 1;
-min-width: 0;
-font-size: 14px;
 }
 
-.user #usr{
- outline: none;
- border: none;
- flex: 1;
- min-width: 0;
- font-size: 14px;
+.user img,
+.pass img {
+    flex-shrink: 0;
 }
-.pass #olho{
-margin-left: auto ;
-cursor: pointer;
+
+.pass #snh {
+    border: none;
+    outline: none;
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    font-size: 14px;
+    background: transparent;
+    color: #064e32;
+    letter-spacing: normal;
+    pointer-events: auto;
+    user-select: text;
 }
-.entrar{
+
+.user #usr {
+    outline: none;
+    border: none;
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+}
+
+.pass #olho {
+    width: 25px;
+    height: 25px;
+    margin-left: 10px;
+    flex-shrink: 0;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.entrar {
     background-color: #168a38;
     color: #fff;
     width: 100%;
     height: 40px;
-    border-radius: 8px ;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -120,13 +149,16 @@ cursor: pointer;
     outline: none;
     border: none;
 }
-.entrar:hover{
+
+.entrar:hover {
     background-color: #064e32;
 }
-.entrar img{
+
+.entrar img {
     width: 20px;
 }
-.manter{
+
+.manter {
     color: #064e32;
     accent-color: #064e32;
     outline: none;
@@ -135,8 +167,19 @@ cursor: pointer;
     justify-content: space-around;
     gap: 20px;
 }
-.cads{
+
+.cads {
     font-size: 20px;
     color: #064e32;
     text-decoration: none;
+}
+
+@media (max-width: 520px) {
+    .fl {
+        padding: 15px;
+    }
+
+    .cads {
+        font-size: 15px;
+    }
 }

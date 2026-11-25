@@ -1,22 +1,27 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
-    <link rel="stylesheet" href="login.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="login.css">
     <title>Login Coop</title>
 </head>
 
 <body>
+
     <div class="fl">
+
         <div class="cfl">
             <div>
                 <h1><span>Coop</span>Recicla</h1>
                 <h2>Cooperativa de Reciclagem</h2>
             </div>
+
             <img src="simbolo-de-reciclagem.png" alt="" id="reci">
         </div>
+
         <div class="divisor">
             <span></span>
             <img src="folha.png" alt="">
@@ -25,31 +30,165 @@
 
         <h2>Acesse sua conta</h2>
         <h3>Faça login para continuar</h3>
-        <div class="user">
-            <img src="user.png" alt="">
-            <input type="text" id="usr" placeholder="Usuário">
-        </div>
-        <div class="pass">
-            <img src="lock.png" alt="">
-            <input type="password" id="snh" placeholder="Senha">
-            <img src="eye-crossed.png" alt="" id="olho">
-        </div>
-        <a class="cads" href="esqsenha.html">Esqueceu a senha?</a>
-        <a class="cads" href="cadastro.html">Não possui uma conta? cadastre-se</a>
-        <button type="button" id="entr" class="entrar">
-            <img src="enter.png" alt="">
-            Entrar
-        </button>
+
+        <form id="formLogin">
+
+            <div class="user">
+                <img src="user.png" alt="">
+
+                <input
+                    type="email"
+                    id="usr"
+                    placeholder="E-mail"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="pass">
+                <img src="lock.png" alt="">
+
+                <input
+                    type="password"
+                    id="snh"
+                    placeholder="Senha"
+                    minlength="8"
+                    maxlength="8"
+                    autocomplete="current-password"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    required
+                >
+
+                <img
+                    src="eye-crossed.png"
+                    alt="Mostrar senha"
+                    id="olho"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Mostrar senha"
+                >
+            </div>
+
+            <a class="cads" href="esqsenha.html">
+                Esqueceu a senha?
+            </a>
+
+            <a class="cads" href="cadastro.html">
+                Não possui uma conta? cadastre-se
+            </a>
+
+            <button type="submit" id="entr" class="entrar">
+                <img src="enter.png" alt="">
+                Entrar
+            </button>
+
+        </form>
+
         <div class="divisor">
             <span></span>
             <img src="folha.png" alt="">
             <span></span>
         </div>
 
-        <h4>Juntos por um planeta mais sustentavel!</h4>
-
+        <h4>Juntos por um planeta mais sustentável!</h4>
 
     </div>
-</body>
 
+    <script>
+
+        const formLogin = document.getElementById("formLogin");
+        const email = document.getElementById("usr");
+        const senha = document.getElementById("snh");
+        const olho = document.getElementById("olho");
+
+        // Mostrar ou ocultar senha
+        function alternarVisibilidadeSenha() {
+
+            const mostrar = senha.type === "password";
+
+            senha.type = mostrar ? "text" : "password";
+
+            olho.src = mostrar ? "eye.png" : "eye-crossed.png";
+
+            olho.alt = mostrar ? "Ocultar senha" : "Mostrar senha";
+
+            olho.setAttribute("aria-label", olho.alt);
+        }
+
+        olho.addEventListener("click", alternarVisibilidadeSenha);
+
+        olho.addEventListener("keydown", function(event) {
+
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                alternarVisibilidadeSenha();
+            }
+
+        });
+
+        // Realizar login
+        formLogin.addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const senhaDigitada = senha.value;
+
+            if (senhaDigitada.length !== 8) {
+                alert("A senha deve ter exatamente 8 caracteres.");
+                senha.focus();
+                return;
+            }
+
+            try {
+
+                const resposta = await fetch("http://localhost:3000/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email: email.value.trim(),
+                        senha: senhaDigitada
+                    })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    alert(dados.mensagem || "E-mail ou senha incorretos.");
+                    return;
+                }
+
+                if (dados.perfil !== "ADM" && dados.perfil !== "MORADOR") {
+                    alert("Perfil de usuário não reconhecido.");
+                    return;
+                }
+
+                // Salvar informações do usuário
+                localStorage.setItem("usuario_email", dados.email);
+                localStorage.setItem("usuario_nome", dados.nome);
+                localStorage.setItem("usuario_perfil", dados.perfil);
+                localStorage.setItem("usuario_cpf", dados.cpf);
+
+                // Redirecionar conforme o perfil
+                if (dados.perfil === "ADM") {
+                    window.location.href = "painel-adm.html";
+                } else {
+                    window.location.href = "menu.html";
+                }
+
+            } catch (erro) {
+
+                console.error("Erro no login:", erro);
+
+                alert("Não foi possível conectar ao servidor.");
+
+            }
+
+        });
+
+    </script>
+
+</body>
 </html>
