@@ -16,23 +16,23 @@ app.use(express.urlencoded({ extended: true }));
 // IMPORTAR DAOs
 // =====================================
 
-const PontoColetaDAO = require('../../POO/CoopRecicla/PontoColetaDAO');
-const RecompensaDAO = require('../../POO/CoopRecicla/RecompensaDAO');
-const MaterialDAO = require('../../POO/CoopRecicla/MaterialDAO');
-const ItemEntregaDAO = require('../../POO/CoopRecicla/ItemEntregaDAO');
-const ResgateDAO = require('../../POO/CoopRecicla/ResgateDAO');
-const ADMDAO = require('../../POO/CoopRecicla/ADMDAO');
+const PontoColetaDAO = require('../../../POO/CoopRecicla/PontoColetaDAO')
+const RecompensaDAO = require('../../../POO/CoopRecicla/RecompensaDAO');
+const MaterialDAO = require('../../../POO/CoopRecicla/MaterialDAO')
+const ItemEntregaDAO = require('../../../POO/CoopRecicla/ItemEntregaDAO');
+const ResgateDAO = require('../../../POO/CoopRecicla/ResgateDAO');
+const ADMDAO = require('../../../POO/CoopRecicla/ADMDAO');
 
 // =====================================
 // IMPORTAR CLASSES
 // =====================================
 
-const PontoColeta = require('../../POO/CoopRecicla/PontoColeta');
-const Recompensa = require('../../POO/CoopRecicla/Recompensa');
-const Material = require('../../POO/CoopRecicla/Material');
-const ItemEntrega = require('../../POO/CoopRecicla/ItemEntrega');
-const Resgate = require('../../POO/CoopRecicla/Resgate');
-const ADM = require('../../POO/CoopRecicla/ADM');
+const PontoColeta = require('../../../POO/CoopRecicla/PontoColeta');
+const Recompensa = require('../../../POO/CoopRecicla/Recompensa');
+const Material = require('../../../POO/CoopRecicla/Material');
+const ItemEntrega = require('../../../POO/CoopRecicla/ItemEntrega');
+const Resgate = require('../../../POO/CoopRecicla/Resgate');
+const ADM = require('../../../POO/CoopRecicla/ADM');
 
 // =====================================
 // INSTANCIAR DAOs
@@ -161,12 +161,11 @@ app.post('/usuarios', async (req, res) => {
         );
 
         await conexao.query(
-            `INSERT INTO Morador
-             (cpf, endereco, pontos, senha)
-             VALUES (?, ?, 0, ?)`,
-            [cpf, endereco, senha]
-        );
-
+    `INSERT INTO Morador
+     (cpf, endereco, pontos)
+     VALUES (?, ?, 0)`,
+    [cpf, endereco]
+);
         await conexao.commit();
 
         return res.status(201).json({
