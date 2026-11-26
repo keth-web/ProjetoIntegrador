@@ -9,9 +9,7 @@ const {
     resgateDAO
 } = require('./funcoes');
 
-// ========================================
-// REGISTRAR RESGATE
-// ========================================
+
 
 router.post('/resgates', async (req, res) => {
     const { cpf, cod_recomp } = req.body;
@@ -52,8 +50,7 @@ router.post('/resgates', async (req, res) => {
         };
 
         try {
-            // Busca o morador e bloqueia seu registro
-            // durante a operação para evitar descontos simultâneos.
+     
             const moradores = await consultar(
                 `SELECT cpf, pontos
                  FROM Morador
@@ -69,7 +66,6 @@ router.post('/resgates', async (req, res) => {
                 );
             }
 
-            // Busca a recompensa
             const recompensas = await consultar(
                 `SELECT cod_recomp, catalogo, registro_pontos
                  FROM recompensa
@@ -104,16 +100,16 @@ router.post('/resgates', async (req, res) => {
                 );
             }
 
-            // Gera o código do resgate
+         
             const cod_resg =
                 `R${Date.now().toString().slice(-8)}`;
 
-            // Data atual
+       
             const data_resg = new Date()
                 .toISOString()
                 .slice(0, 10);
 
-            // Desconta os pontos do morador
+            
             await consultar(
                 `UPDATE Morador
                  SET pontos = pontos - ?
@@ -121,7 +117,7 @@ router.post('/resgates', async (req, res) => {
                 [custo, cpf]
             );
 
-            // Registra o resgate
+     
             await consultar(
                 `INSERT INTO resgate
                  (cod_recomp, cpf, cod_resg, data_resg)
@@ -129,7 +125,7 @@ router.post('/resgates', async (req, res) => {
                 [cod_recomp, cpf, cod_resg, data_resg]
             );
 
-            // Confirma as duas operações
+
             db.commit((erroCommit) => {
                 if (erroCommit) {
                     return db.rollback(() => {
@@ -162,9 +158,7 @@ router.post('/resgates', async (req, res) => {
 });
 
 
-// ========================================
-// LISTAR RESGATES DO MORADOR
-// ========================================
+
 
 router.get('/moradores/:cpf/resgates', async (req, res) => {
     const { cpf } = req.params;
