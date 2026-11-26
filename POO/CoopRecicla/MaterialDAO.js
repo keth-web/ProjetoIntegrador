@@ -3,6 +3,10 @@ const db = require('../../PWEB/BACK-END/conexao');
 
 class MaterialDAO {
 
+    // =============================================
+    // CADASTRAR
+    // =============================================
+
     cadastrar(material, callback) {
         try {
             material.validar();
@@ -11,7 +15,8 @@ class MaterialDAO {
         }
 
         const sql = `
-            INSERT INTO material (cod_m, tipo, ponto_kg)
+            INSERT INTO material
+                (cod_m, tipo, ponto_kg)
             VALUES (?, ?, ?)
         `;
 
@@ -22,20 +27,43 @@ class MaterialDAO {
         ], callback);
     }
 
+    // =============================================
+    // LISTAR
+    // =============================================
+
     listar(callback) {
-        const sql = 'SELECT * FROM material';
+        const sql = `
+            SELECT
+                cod_m,
+                tipo,
+                ponto_kg
+            FROM material
+            ORDER BY cod_m ASC
+        `;
 
         db.query(sql, callback);
     }
 
+    // =============================================
+    // BUSCAR POR CÓDIGO
+    // =============================================
+
     buscarPorCodigo(cod_m, callback) {
         const sql = `
-            SELECT * FROM material
+            SELECT
+                cod_m,
+                tipo,
+                ponto_kg
+            FROM material
             WHERE cod_m = ?
         `;
 
         db.query(sql, [cod_m], callback);
     }
+
+    // =============================================
+    // ATUALIZAR
+    // =============================================
 
     atualizar(material, callback) {
         try {
@@ -46,7 +74,9 @@ class MaterialDAO {
 
         const sql = `
             UPDATE material
-            SET tipo = ?, ponto_kg = ?
+            SET
+                tipo = ?,
+                ponto_kg = ?
             WHERE cod_m = ?
         `;
 
@@ -56,6 +86,10 @@ class MaterialDAO {
             material.getCod_m()
         ], callback);
     }
+
+    // =============================================
+    // EXCLUIR
+    // =============================================
 
     excluir(cod_m, callback) {
         const sql = `

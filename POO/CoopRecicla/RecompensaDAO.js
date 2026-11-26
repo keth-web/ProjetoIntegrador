@@ -1,11 +1,20 @@
+
 const db = require('../../PWEB/BACK-END/conexao');
 
 class RecompensaDAO {
+
+    
+
     cadastrar(recompensa, callback) {
-        try { recompensa.validar(); } catch (erro) { return callback(erro); }
+        try {
+            recompensa.validar();
+        } catch (erro) {
+            return callback(erro);
+        }
 
         const sql = `
-            INSERT INTO recompensa (cod_recomp, registro_pontos, catalogo)
+            INSERT INTO recompensa
+                (cod_recomp, registro_pontos, catalogo)
             VALUES (?, ?, ?)
         `;
 
@@ -16,20 +25,50 @@ class RecompensaDAO {
         ], callback);
     }
 
+   
+
     listar(callback) {
-        db.query('SELECT * FROM recompensa', callback);
+        const sql = `
+            SELECT
+                cod_recomp,
+                registro_pontos,
+                catalogo
+            FROM recompensa
+            ORDER BY cod_recomp ASC
+        `;
+
+        db.query(sql, callback);
     }
+
+   
 
     buscarPorCodigo(cod_recomp, callback) {
-        db.query('SELECT * FROM recompensa WHERE cod_recomp = ?', [cod_recomp], callback);
+        const sql = `
+            SELECT
+                cod_recomp,
+                registro_pontos,
+                catalogo
+            FROM recompensa
+            WHERE cod_recomp = ?
+        `;
+
+        db.query(sql, [cod_recomp], callback);
     }
 
+    
+
     atualizar(recompensa, callback) {
-        try { recompensa.validar(); } catch (erro) { return callback(erro); }
+        try {
+            recompensa.validar();
+        } catch (erro) {
+            return callback(erro);
+        }
 
         const sql = `
             UPDATE recompensa
-            SET registro_pontos = ?, catalogo = ?
+            SET
+                registro_pontos = ?,
+                catalogo = ?
             WHERE cod_recomp = ?
         `;
 
@@ -40,8 +79,14 @@ class RecompensaDAO {
         ], callback);
     }
 
+    
     excluir(cod_recomp, callback) {
-        db.query('DELETE FROM recompensa WHERE cod_recomp = ?', [cod_recomp], callback);
+        const sql = `
+            DELETE FROM recompensa
+            WHERE cod_recomp = ?
+        `;
+
+        db.query(sql, [cod_recomp], callback);
     }
 }
 

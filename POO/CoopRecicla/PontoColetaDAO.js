@@ -1,10 +1,17 @@
+
 const db = require('../../PWEB/BACK-END/conexao');
+
 class PontoColetaDAO {
+
     cadastrar(ponto, callback) {
-        try { ponto.validar(); } catch (erro) { return callback(erro); }
+        try {
+            ponto.validar();
+        } catch (erro) {
+            return callback(erro);
+        }
 
         const sql = `
-            INSERT INTO ponto_coleta (nome, end, tel)
+            INSERT INTO ponto_coleta (nome, \`end\`, tel)
             VALUES (?, ?, ?)
         `;
 
@@ -16,15 +23,26 @@ class PontoColetaDAO {
     }
 
     listar(callback) {
-        db.query('SELECT * FROM ponto_coleta', callback);
+        db.query(
+            'SELECT * FROM ponto_coleta ORDER BY id ASC',
+            callback
+        );
     }
 
     buscarPorId(id, callback) {
-        db.query('SELECT * FROM ponto_coleta WHERE id = ?', [id], callback);
+        db.query(
+            'SELECT * FROM ponto_coleta WHERE id = ?',
+            [id],
+            callback
+        );
     }
 
     atualizar(ponto, callback) {
-        try { ponto.validar(); } catch (erro) { return callback(erro); }
+        try {
+            ponto.validar();
+        } catch (erro) {
+            return callback(erro);
+        }
 
         const sql = `
             UPDATE ponto_coleta
@@ -41,7 +59,11 @@ class PontoColetaDAO {
     }
 
     excluir(id, callback) {
-        db.query('DELETE FROM ponto_coleta WHERE id = ?', [id], callback);
+        db.query(
+            'DELETE FROM ponto_coleta WHERE id = ?',
+            [id],
+            callback
+        );
     }
 }
 

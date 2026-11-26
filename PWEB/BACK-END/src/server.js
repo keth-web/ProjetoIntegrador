@@ -5,17 +5,10 @@ const cors = require('cors');
 const app = express();
 const PORTA = 3000;
 
-// =====================================
-// CONFIGURAÇÕES
-// =====================================
-
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// =====================================
-// IMPORTAÇÃO DAS ROTAS
-// =====================================
 
 const usuariosRoutes = require('./usuarios');
 const pontosRoutes = require('./pontos');
@@ -23,32 +16,34 @@ const materiaisRoutes = require('./materiais');
 const recompensasRoutes = require('./recompensas');
 const entregasRoutes = require('./entregas');
 const relatoriosRoutes = require('./relatorios');
+const resgatesRoutes = require('./resgates');
 
-// =====================================
-// REGISTRO DAS ROTAS
-// =====================================
 
-app.use('/', usuarios);
-app.use('/', pontos);
-app.use('/', materiais);
-app.use('/', recompensas);
-app.use('/', entregas);
-app.use('/', relatorios);
+app.use('/', usuariosRoutes);
+app.use('/', pontosRoutes);
+app.use('/', materiaisRoutes);
+app.use('/', recompensasRoutes);
+app.use('/', entregasRoutes);
+app.use('/', relatoriosRoutes);
 
-// =====================================
-// ROTA INICIAL
-// =====================================
+
 
 app.get('/', (req, res) => {
-    res.json({
-        mensagem: 'API CoopRecicla funcionando!'
+    res.send('Servidor CoopRecicla funcionando!');
+});
+
+
+
+app.use((req, res) => {
+    res.status(404).json({
+        mensagem: 'Rota não encontrada.'
     });
 });
 
-// =====================================
-// INICIAR SERVIDOR
-// =====================================
 
 app.listen(PORTA, () => {
-    console.log(`Servidor CoopRecicla rodando em http://localhost:${PORTA}`);
+    console.log('=================================');
+    console.log('COOPRECICLA - SERVIDOR ONLINE');
+    console.log(`http://localhost:${PORTA}`);
+    console.log('=================================');
 });

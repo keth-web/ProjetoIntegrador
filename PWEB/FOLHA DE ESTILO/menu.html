@@ -1,1054 +1,638 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CoopRecicla - Painel do Sistema</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CoopRecicla - Painel do Sistema</title>
+
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-  <header>
-    <div class="logo">
-      <div class="logo-icon">♻️</div>
-      <div>
-        <h1>Coop<span>Recicla</span></h1>
-      </div>
-    </div>
+    <!-- CABEÇALHO -->
+    <header>
 
-    <div class="user-info">
-      <div class="user-badge">
-        <span>👤</span>
-        <span id="userEmail"></span>
-      </div>
-      <button class="btn-sair" onclick="window.location.href='cadastro.html'">
-        Novo Cadastro
-      </button>
-    </div>
-  </header>
+        <div class="logo">
+            <div class="logo-icon">♻️</div>
 
-  <nav class="menu-scroll">
-    <button class="nav-btn ativo" onclick="mostrarAba('meu-saldo', this)">
-      Visão Geral & Saldo
-    </button>
-
-    <button class="nav-btn" onclick="mostrarAba('registrar-entrega', this)">
-      Registrar Entrega
-    </button>
-
-    <button class="nav-btn" onclick="mostrarAba('resgatar', this)">
-      Resgatar Recompensas
-    </button>
-
-    <button class="nav-btn" onclick="mostrarAba('extrato', this)">
-      Extrato Completo
-    </button>
-
-    <button class="nav-btn" id="btnGestaoAdm"
-      onclick="mostrarAba('gestao-adm', this)">
-      Cadastros Base (ADM)
-    </button>
-
-    <button id="btnPainelAdm"
-      onclick="window.location.href='painel-adm.html'">
-      🛡️ Área ADM
-    </button>
-  </nav>
-
-  <main>
-
-    <!-- ABA 1: SALDO -->
-    <section id="meu-saldo" class="aba ativa">
-
-      <div class="grid-resumo">
-
-        <div class="card-saldo">
-          <small>Saldo Disponível (Morador)</small>
-          <div class="valor" id="saldoAtual">0 pts</div>
+            <div>
+                <h1>Coop<span>Recicla</span></h1>
+            </div>
         </div>
 
-        <div class="card-stat">
-          <small>Total Reciclado</small>
-          <div class="valor" id="totalKg">0,0 kg</div>
-        </div>
+        <div class="user-info">
 
-        <div class="card-stat">
-          <small>Entregas Realizadas</small>
-          <div class="valor" id="totalEntregasCount">0</div>
-        </div>
-
-      </div>
-
-      <div class="card-painel">
-
-        <h2>Bem-vindo ao CoopRecicla</h2>
-
-        <p class="subtitulo-secao">
-          Tabela de conversão vigente por material reciclável cadastrado no sistema:
-        </p>
-
-        <div class="tabela-wrapper">
-
-          <table>
-            <thead>
-              <tr>
-                <th>Código (cod_m)</th>
-                <th>Tipo de Material</th>
-                <th>Pontuação por Kg (ponto_kg)</th>
-              </tr>
-            </thead>
-
-            <tbody id="tabelaMateriaisResumo"></tbody>
-          </table>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ABA 2: REGISTRAR ENTREGA -->
-    <section id="registrar-entrega" class="aba">
-
-      <div class="card-painel">
-
-        <h2>Registrar Nova Entrega</h2>
-
-        <p class="subtitulo-secao">
-          Vincule o ponto de coleta e adicione os materiais pesados na balança.
-        </p>
-
-        <form onsubmit="salvarEntrega(event)">
-
-          <div class="grid-form">
-
-            <div class="campo">
-              <label for="entPonto">
-                Ponto de Coleta (ponto_coleta)
-                <span class="obrigatorio">*</span>
-              </label>
-
-              <select id="entPonto" required></select>
+            <div class="user-badge">
+                <span>👤</span>
+                <span id="userEmail"></span>
             </div>
 
-            <div class="campo">
-              <label for="entData">
-                Data da Entrega (data_a)
-                <span class="obrigatorio">*</span>
-              </label>
-
-              <input type="text" id="entData" readonly>
-            </div>
-
-          </div>
-
-          <div class="grid-form-3"
-            style="background: var(--verde-menta); padding: 16px; border-radius: var(--radius-md); margin-bottom: 16px;">
-
-            <div class="campo" style="margin: 0;">
-              <label for="entMaterial">Material (cod_m)</label>
-              <select id="entMaterial"></select>
-            </div>
-
-            <div class="campo" style="margin: 0;">
-              <label for="entPeso">Peso em Kg</label>
-              <input
-                type="number"
-                id="entPeso"
-                step="0.01"
-                min="0.1"
-                placeholder="Ex: 2.50"
-              >
-            </div>
-
-            <button
-              type="button"
-              class="btn-secundario"
-              onclick="adicionarItemCarrinho()">
-              + Adicionar Item
+            <button class="btn-sair" onclick="sair()">
+                Sair
             </button>
 
-          </div>
-
-          <!-- Itens temporários de item_entrega -->
-          <div class="tabela-wrapper"
-            id="boxItensEntrega"
-            style="display: none; margin-bottom: 16px;">
-
-            <table>
-              <thead>
-                <tr>
-                  <th>Material</th>
-                  <th>Peso (kg)</th>
-                  <th>Subtotal Pontos</th>
-                  <th>Ação</th>
-                </tr>
-              </thead>
-
-              <tbody id="tabelaCarrinhoEntrega"></tbody>
-            </table>
-
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-
-            <strong style="color: var(--verde-profundo);">
-              Total desta entrega:
-              <span id="previaPontosEntrega">0</span> pts
-            </strong>
-
-            <button type="submit" class="btn-primario">
-              Confirmar Entrega
-            </button>
-
-          </div>
-
-        </form>
-
-        <h3>Histórico de Entregas</h3>
-
-        <div class="tabela-wrapper">
-
-          <table>
-            <thead>
-              <tr>
-                <th>Cód. Entrega</th>
-                <th>Data / Hora</th>
-                <th>Ponto de Coleta</th>
-                <th>Itens</th>
-                <th>Total Pontos</th>
-              </tr>
-            </thead>
-
-            <tbody id="tabelaEntregas"></tbody>
-          </table>
-
         </div>
 
-      </div>
-    </section>
+    </header>
 
-    <!-- ABA 3: RESGATAR RECOMPENSAS -->
-    <section id="resgatar" class="aba">
 
-      <div class="card-painel">
+    <!-- MENU DE NAVEGAÇÃO -->
+    <nav class="menu-scroll">
 
-        <h2>Resgatar Recompensas</h2>
+        <button
+            class="nav-btn ativo"
+            data-aba="meu-saldo"
+            onclick="mostrarAba('meu-saldo')">
+            Visão Geral & Saldo
+        </button>
 
-        <p class="subtitulo-secao">
-          Troque seus pontos acumulados pelos itens disponíveis no catálogo.
-        </p>
+        <button
+            class="nav-btn"
+            data-aba="registrar-entrega"
+            onclick="mostrarAba('registrar-entrega')">
+            Registrar Entrega
+        </button>
 
-        <form onsubmit="realizarResgate(event)" class="grid-form">
+        <button
+            class="nav-btn"
+            data-aba="resgatar"
+            onclick="mostrarAba('resgatar')">
+            Resgatar Recompensas
+        </button>
 
-          <div class="campo full">
-            <label for="selectRecompensa">
-              Selecione a Recompensa (recompensa)
-              <span class="obrigatorio">*</span>
-            </label>
+        <button
+            class="nav-btn"
+            data-aba="extrato"
+            onclick="mostrarAba('extrato')">
+            Extrato Completo
+        </button>
 
-            <select id="selectRecompensa" required></select>
-          </div>
+        <button
+            class="nav-btn"
+            id="btnGestaoAdm"
+            data-aba="gestao-adm"
+            onclick="mostrarAba('gestao-adm')">
+            Cadastros Base (ADM)
+        </button>
 
-          <div class="campo full">
-            <button type="submit" class="btn-primario">
-              Confirmar Resgate
-            </button>
-          </div>
+        <button
+            id="btnPainelAdm"
+            onclick="window.location.href='painel-adm.html'">
+            🛡️ Área ADM
+        </button>
 
-        </form>
+    </nav>
 
-        <h3>Seus Resgates Efetuados</h3>
 
-        <div class="tabela-wrapper">
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main>
 
-          <table>
-            <thead>
-              <tr>
-                <th>Cód. Resgate</th>
-                <th>Data (data_resg)</th>
-                <th>Recompensa</th>
-                <th>Pontos Utilizados</th>
-              </tr>
-            </thead>
 
-            <tbody id="tabelaResgates"></tbody>
-          </table>
+        <!-- ===================================== -->
+        <!-- VISÃO GERAL E SALDO -->
+        <!-- ===================================== -->
 
-        </div>
+        <section id="meu-saldo" class="aba ativa">
 
-      </div>
-    </section>
+            <div class="grid-resumo">
 
-    <!-- ABA 4: EXTRATO -->
-    <section id="extrato" class="aba">
+                <div class="card-saldo">
+                    <small>Saldo Disponível (Morador)</small>
+                    <div class="valor" id="saldoAtual">0 pts</div>
+                </div>
 
-      <div class="card-painel">
+                <div class="card-stat">
+                    <small>Total Reciclado</small>
+                    <div class="valor" id="totalKg">0,0 kg</div>
+                </div>
 
-        <h2>Extrato Completo de Movimentações</h2>
+                <div class="card-stat">
+                    <small>Entregas Realizadas</small>
+                    <div class="valor" id="totalEntregasCount">0</div>
+                </div>
 
-        <p class="subtitulo-secao">
-          Acompanhe todas as entradas por entrega e saídas por resgate.
-        </p>
-
-        <div class="tabela-wrapper">
-
-          <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Movimentação</th>
-                <th>Descrição</th>
-                <th>Pontos</th>
-              </tr>
-            </thead>
-
-            <tbody id="tabelaExtrato"></tbody>
-          </table>
-
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ABA 5: CADASTROS BASE DO BANCO -->
-    <section id="gestao-adm" class="aba">
-
-      <div class="card-painel">
-
-        <h2>Cadastros Operacionais (ADM)</h2>
-
-        <p class="subtitulo-secao">
-          Gerencie pontos de coleta, tipos de materiais e catálogo de recompensas.
-        </p>
-
-        <div class="grid-form">
-
-          <!-- Cadastro ponto_coleta -->
-          <form
-            onsubmit="cadastrarPonto(event)"
-            style="border: 1px solid var(--cinza-borda); padding: 16px; border-radius: var(--radius-md);">
-
-            <h3 style="margin-top: 0;">Novo Ponto de Coleta</h3>
-
-            <div class="campo">
-              <label>Nome do Ponto (nome)</label>
-
-              <input
-                type="text"
-                id="novoPontoNome"
-                maxlength="50"
-                required
-                placeholder="Ex: Ecoponto Centro"
-              >
             </div>
 
-            <div class="campo">
-              <label>Endereço (end)</label>
 
-              <input
-                type="text"
-                id="novoPontoEnd"
-                maxlength="100"
-                required
-                placeholder="Rua das Árvores, 120"
-              >
+            <div class="card-painel">
+
+                <h2>Bem-vindo ao CoopRecicla</h2>
+
+                <p class="subtitulo-secao">
+                    Tabela de conversão vigente por material reciclável:
+                </p>
+
+                <div class="tabela-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Tipo de Material</th>
+                                <th>Pontuação por Kg</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tabelaMateriaisResumo"></tbody>
+
+                    </table>
+
+                </div>
+
             </div>
 
-            <div class="campo">
-              <label>Telefone (tel)</label>
+        </section>
 
-              <input
-                type="text"
-                id="novoPontoTel"
-                maxlength="11"
-                placeholder="82988887777"
-              >
+
+        <!-- ===================================== -->
+        <!-- REGISTRAR ENTREGA -->
+        <!-- ===================================== -->
+
+        <section id="registrar-entrega" class="aba">
+
+            <div class="card-painel">
+
+                <h2>Registrar Nova Entrega</h2>
+
+                <p class="subtitulo-secao">
+                    Vincule o ponto de coleta e adicione os materiais.
+                </p>
+
+
+                <form onsubmit="event.preventDefault(); salvarEntrega(event);">
+
+                    <div class="grid-form">
+
+                        <div class="campo">
+
+                            <label for="entPonto">
+                                Ponto de Coleta *
+                            </label>
+
+                            <select id="entPonto" required>
+                                <option value="">Selecione um ponto</option>
+                            </select>
+
+                        </div>
+
+
+                        <div class="campo">
+
+                            <label for="entData">
+                                Data da Entrega *
+                            </label>
+
+                            <input
+                                type="date"
+                                id="entData"
+                                required>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="grid-form-3">
+
+                        <div class="campo">
+
+                            <label for="entMaterial">
+                                Material
+                            </label>
+
+                            <select id="entMaterial">
+
+                                <option value="">
+                                    Selecione um material
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="campo">
+
+                            <label for="entPeso">
+                                Peso em Kg
+                            </label>
+
+                            <input
+                                type="number"
+                                id="entPeso"
+                                step="0.01"
+                                min="0.1"
+                                placeholder="Ex: 2.50">
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="btn-secundario"
+                            onclick="adicionarItemCarrinho()">
+
+                            + Adicionar Item
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- ITENS ADICIONADOS -->
+
+                    <div
+                        class="tabela-wrapper"
+                        id="boxItensEntrega"
+                        style="display:none;">
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>Material</th>
+                                    <th>Peso</th>
+                                    <th>Subtotal</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="tabelaCarrinhoEntrega"></tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- TOTAL DA ENTREGA -->
+
+                    <div>
+
+                        <strong>
+                            Total desta entrega:
+
+                            <span id="previaPontosEntrega">0</span> pts
+                        </strong>
+
+                        <button
+                            type="submit"
+                            class="btn-primario">
+
+                            Confirmar Entrega
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <!-- HISTÓRICO DE ENTREGAS -->
+
+                <h3>Histórico de Entregas</h3>
+
+                <div class="tabela-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Data / Hora</th>
+                                <th>Ponto</th>
+                                <th>Itens</th>
+                                <th>Pontos</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tabelaEntregas"></tbody>
+
+                    </table>
+
+                </div>
+
             </div>
 
-            <button
-              type="submit"
-              class="btn-primario"
-              style="width: 100%;">
-              Salvar Ponto
-            </button>
+        </section>
 
-          </form>
 
-          <!-- Cadastro material -->
-          <form
-            onsubmit="cadastrarMaterial(event)"
-            style="border: 1px solid var(--cinza-borda); padding: 16px; border-radius: var(--radius-md);">
+        <!-- ===================================== -->
+        <!-- RESGATAR RECOMPENSAS -->
+        <!-- ===================================== -->
 
-            <h3 style="margin-top: 0;">Novo Material Reciclável</h3>
+        <section id="resgatar" class="aba">
 
-            <div class="campo">
-              <label>Código (cod_m - até 9 chars)</label>
+            <div class="card-painel">
 
-              <input
-                type="text"
-                id="novoMatCod"
-                maxlength="9"
-                required
-                placeholder="Ex: MAT005"
-              >
+                <h2>Resgatar Recompensas</h2>
+
+                <p class="subtitulo-secao">
+                    Troque seus pontos pelos itens disponíveis.
+                </p>
+
+
+                <form onsubmit="event.preventDefault(); realizarResgate(event);">
+
+                    <div class="campo">
+
+                        <label for="selectRecompensa">
+                            Selecione a Recompensa *
+                        </label>
+
+                        <select id="selectRecompensa" required>
+
+                            <option value="">
+                                Selecione uma recompensa
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn-primario">
+
+                        Confirmar Resgate
+
+                    </button>
+
+                </form>
+
+
+                <h3>Seus Resgates Efetuados</h3>
+
+                <div class="tabela-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Data</th>
+                                <th>Recompensa</th>
+                                <th>Pontos</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tabelaResgates"></tbody>
+
+                    </table>
+
+                </div>
+
             </div>
 
-            <div class="campo">
-              <label>Sigla / Tipo (tipo - até 3 chars)</label>
+        </section>
 
-              <input
-                type="text"
-                id="novoMatTipo"
-                maxlength="3"
-                required
-                placeholder="Ex: PET, ALU, PAP"
-              >
+
+        <!-- ===================================== -->
+        <!-- EXTRATO COMPLETO -->
+        <!-- ===================================== -->
+
+        <section id="extrato" class="aba">
+
+            <div class="card-painel">
+
+                <h2>Extrato Completo de Movimentações</h2>
+
+                <p class="subtitulo-secao">
+                    Acompanhe entradas e saídas de pontos.
+                </p>
+
+
+                <div class="tabela-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Movimentação</th>
+                                <th>Descrição</th>
+                                <th>Pontos</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tabelaExtrato"></tbody>
+
+                    </table>
+
+                </div>
+
             </div>
 
-            <div class="campo">
-              <label>Pontos por Kg (ponto_kg)</label>
+        </section>
 
-              <input
-                type="number"
-                id="novoMatPontos"
-                min="1"
-                required
-                placeholder="Ex: 50"
-              >
+
+        <!-- ===================================== -->
+        <!-- CADASTROS BASE ADM -->
+        <!-- ===================================== -->
+
+        <section id="gestao-adm" class="aba">
+
+            <div class="card-painel">
+
+                <h2>Cadastros Operacionais (ADM)</h2>
+
+                <p class="subtitulo-secao">
+                    Gerencie pontos, materiais e recompensas.
+                </p>
+
+
+                <div class="grid-form">
+
+
+                    <!-- CADASTRAR PONTO -->
+
+                    <form onsubmit="event.preventDefault(); cadastrarPonto(event);">
+
+                        <h3>Novo Ponto de Coleta</h3>
+
+                        <div class="campo">
+
+                            <label for="novoPontoNome">
+                                Nome
+                            </label>
+
+                            <input
+                                type="text"
+                                id="novoPontoNome"
+                                maxlength="50"
+                                required>
+
+                        </div>
+
+
+                        <div class="campo">
+
+                            <label for="novoPontoEnd">
+                                Endereço
+                            </label>
+
+                            <input
+                                type="text"
+                                id="novoPontoEnd"
+                                maxlength="100"
+                                required>
+
+                        </div>
+
+
+                        <div class="campo">
+
+                            <label for="novoPontoTel">
+                                Telefone
+                            </label>
+
+                            <input
+                                type="text"
+                                id="novoPontoTel"
+                                maxlength="11">
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn-primario">
+
+                            Salvar Ponto
+
+                        </button>
+
+                    </form>
+
+
+                    <!-- CADASTRAR MATERIAL -->
+
+                    <form onsubmit="event.preventDefault(); cadastrarMaterial(event);">
+
+                        <h3>Novo Material Reciclável</h3>
+
+                        <div class="campo">
+
+                            <label for="novoMatCod">
+                                Código
+                            </label>
+
+                            <input
+                                type="text"
+                                id="novoMatCod"
+                                maxlength="9"
+                                required>
+
+                        </div>
+
+
+                        <div class="campo">
+
+                            <label for="novoMatTipo">
+                                Sigla / Tipo
+                            </label>
+
+                            <input
+                                type="text"
+                                id="novoMatTipo"
+                                maxlength="3"
+                                required>
+
+                        </div>
+
+
+                        <div class="campo">
+
+                            <label for="novoMatPontos">
+                                Pontos por Kg
+                            </label>
+
+                            <input
+                                type="number"
+                                id="novoMatPontos"
+                                min="1"
+                                required>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn-primario">
+
+                            Salvar Material
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <!-- CADASTRAR RECOMPENSA -->
+
+                <form onsubmit="event.preventDefault(); cadastrarRecompensa(event);">
+
+                    <h3>Nova Recompensa no Catálogo</h3>
+
+                    <div class="grid-form-3">
+
+                        <div class="campo">
+
+                            <label for="novaRecNome">
+                                Descrição
+                            </label>
+
+                            <input
+                                type="text"
+                                id="novaRecNome"
+                                maxlength="50"
+                                required>
+
+                        </div>
+
+
+                        <div class="campo">
+
+                            <label for="novaRecPontos">
+                                Custo em Pontos
+                            </label>
+
+                            <input
+                                type="number"
+                                id="novaRecPontos"
+                                min="1"
+                                required>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn-primario">
+
+                            Salvar Recompensa
+
+                        </button>
+
+                    </div>
+
+                </form>
+
             </div>
 
-            <button
-              type="submit"
-              class="btn-primario"
-              style="width: 100%;">
-              Salvar Material
-            </button>
+        </section>
 
-          </form>
+    </main>
 
-        </div>
 
-        <!-- Cadastro recompensa -->
-        <form
-          onsubmit="cadastrarRecompensa(event)"
-          style="border: 1px solid var(--cinza-borda); padding: 16px; border-radius: var(--radius-md); margin-top: 16px;">
-
-          <h3 style="margin-top: 0;">Nova Recompensa no Catálogo</h3>
-
-          <div class="grid-form-3">
-
-            <div class="campo" style="margin: 0;">
-              <label>Catálogo / Descrição (catalogo)</label>
-
-              <input
-                type="text"
-                id="novaRecNome"
-                maxlength="50"
-                required
-                placeholder="Ex: Vale-Feira R$ 20,00"
-              >
-            </div>
-
-            <div class="campo" style="margin: 0;">
-              <label>Custo em Pontos (registro_pontos)</label>
-
-              <input
-                type="number"
-                id="novaRecPontos"
-                min="1"
-                required
-                placeholder="Ex: 200"
-              >
-            </div>
-
-            <button type="submit" class="btn-primario">
-              Salvar Recompensa
-            </button>
-
-          </div>
-
-        </form>
-
-      </div>
-    </section>
-
-  </main>
-
-  <script>
-
-    // Dados recebidos do login
-    const emailLogin = localStorage.getItem("usuario_email");
-    const nomeLogin = localStorage.getItem("usuario_nome");
-    const perfilLogin = localStorage.getItem("usuario_perfil");
-
-    // Impede abrir o menu sem passar pelo login
-    if (!emailLogin || !perfilLogin) {
-      window.location.replace("login.html");
-    }
-
-    // Mantém os dados locais do mesmo usuário, se já existirem
-    const usuarioAnterior = JSON.parse(
-      localStorage.getItem("coop_usuario_ativo") || "null"
-    );
-
-    const mesmoUsuario =
-      usuarioAnterior && usuarioAnterior.email === emailLogin;
-
-    const usuarioAtivo = {
-      cpf: mesmoUsuario ? usuarioAnterior.cpf : "",
-      nome: nomeLogin || emailLogin,
-      email: emailLogin || "",
-      tipo: perfilLogin || "MORADOR",
-      pontos: mesmoUsuario
-        ? Number(usuarioAnterior.pontos) || 0
-        : 0
-    };
-
-    const pontosColeta = JSON.parse(
-      localStorage.getItem("coop_pontos")
-    ) || [
-      {
-        id: 1,
-        nome: "Ecoponto Ponta Verde",
-        end: "Av. Álvaro Otacílio, 400",
-        tel: "8233221100"
-      },
-      {
-        id: 2,
-        nome: "Cooperativa Benedito Bentes",
-        end: "Av. Cachoeira do Meirim, 85",
-        tel: "8233445566"
-      }
-    ];
-
-    const materiais = JSON.parse(
-      localStorage.getItem("coop_materiais")
-    ) || [
-      {
-        cod_m: "MAT001",
-        tipo: "ALU",
-        nome: "Alumínio (Latinhas)",
-        ponto_kg: 120
-      },
-      {
-        cod_m: "MAT002",
-        tipo: "PET",
-        nome: "Plástico PET",
-        ponto_kg: 60
-      },
-      {
-        cod_m: "MAT003",
-        tipo: "PAP",
-        nome: "Papel / Papelão",
-        ponto_kg: 30
-      },
-      {
-        cod_m: "MAT004",
-        tipo: "VID",
-        nome: "Vidro",
-        ponto_kg: 25
-      }
-    ];
-
-    const recompensas = JSON.parse(
-      localStorage.getItem("coop_recompensas")
-    ) || [
-      {
-        cod_recomp: "REC001",
-        catalogo: "Ecobag CoopRecicla",
-        registro_pontos: 150
-      },
-      {
-        cod_recomp: "REC002",
-        catalogo: "Kit Mudas Orgânicas",
-        registro_pontos: 100
-      },
-      {
-        cod_recomp: "REC003",
-        catalogo: "Vale-Compras R$ 25,00",
-        registro_pontos: 400
-      }
-    ];
-
-    const entregas = JSON.parse(
-      localStorage.getItem("coop_entregas")
-    ) || [];
-
-    const resgates = JSON.parse(
-      localStorage.getItem("coop_resgates")
-    ) || [];
-
-    let itensCarrinho = [];
-
-    function salvarEstadoLocal() {
-
-      localStorage.setItem(
-        "coop_usuario_ativo",
-        JSON.stringify(usuarioAtivo)
-      );
-
-      localStorage.setItem(
-        "coop_pontos",
-        JSON.stringify(pontosColeta)
-      );
-
-      localStorage.setItem(
-        "coop_materiais",
-        JSON.stringify(materiais)
-      );
-
-      localStorage.setItem(
-        "coop_recompensas",
-        JSON.stringify(recompensas)
-      );
-
-      localStorage.setItem(
-        "coop_entregas",
-        JSON.stringify(entregas)
-      );
-
-      localStorage.setItem(
-        "coop_resgates",
-        JSON.stringify(resgates)
-      );
-    }
-
-    function mostrarAba(idAba, btn) {
-
-      document.querySelectorAll('.aba').forEach(el => {
-        el.classList.remove('ativa');
-      });
-
-      document.querySelectorAll('.nav-btn').forEach(b => {
-        b.classList.remove('ativo');
-      });
-
-      document.getElementById(idAba).classList.add('ativa');
-
-      btn.classList.add('ativo');
-    }
-
-    function atualizarInterface() {
-
-      // Esconde opções de ADM se o usuário ativo for MORADOR
-      const ehAdm = usuarioAtivo.tipo === "ADM";
-
-      document.getElementById("btnGestaoAdm").style.display =
-        ehAdm ? "inline-block" : "none";
-
-      document.getElementById("btnPainelAdm").style.display =
-        ehAdm ? "inline-block" : "none";
-
-      // Mostra o e-mail utilizado no login
-      document.getElementById("userEmail").textContent =
-        usuarioAtivo.email;
-
-      document.getElementById("saldoAtual").textContent =
-        `${usuarioAtivo.pontos} pts`;
-
-      document.getElementById("entData").value =
-        new Date().toLocaleDateString("pt-BR");
-
-      const totalKg = entregas.reduce(
-        (acc, e) => acc + e.pesoTotal,
-        0
-      );
-
-      document.getElementById("totalKg").textContent =
-        `${totalKg.toFixed(1).replace('.', ',')} kg`;
-
-      document.getElementById("totalEntregasCount").textContent =
-        entregas.length;
-
-      // Popular selects
-      document.getElementById("entPonto").innerHTML =
-        `<option value="">-- Selecione o Ponto --</option>` +
-        pontosColeta.map(p =>
-          `<option value="${p.id}">${p.nome} (${p.end})</option>`
-        ).join("");
-
-      document.getElementById("entMaterial").innerHTML =
-        materiais.map(m =>
-          `<option value="${m.cod_m}">[${m.tipo}] ${m.nome || m.tipo} - ${m.ponto_kg} pts/kg</option>`
-        ).join("");
-
-      document.getElementById("selectRecompensa").innerHTML =
-        recompensas.map(r =>
-          `<option value="${r.cod_recomp}">${r.catalogo} (${r.registro_pontos} pts)</option>`
-        ).join("");
-
-      // Tabela resumo materiais
-      document.getElementById("tabelaMateriaisResumo").innerHTML =
-        materiais.map(m => `
-          <tr>
-            <td><strong>${m.cod_m}</strong></td>
-            <td>${m.tipo} ${m.nome ? '- ' + m.nome : ''}</td>
-            <td>
-              <span class="badge badge-entrada">
-                +${m.ponto_kg} pts/kg
-              </span>
-            </td>
-          </tr>
-        `).join("");
-
-      // Tabela entregas
-      document.getElementById("tabelaEntregas").innerHTML =
-        entregas.length ? entregas.map(e => `
-          <tr>
-            <td>${e.cod_entrega}</td>
-            <td>${e.data_a} às ${e.hora}</td>
-            <td>${e.pontoNome}</td>
-            <td>${e.resumoItens}</td>
-            <td>
-              <span class="badge badge-entrada">
-                +${e.total_pontos} pts
-              </span>
-            </td>
-          </tr>
-        `).join("") : `
-          <tr>
-            <td colspan="5" style="text-align:center; color:var(--texto-secundario);">
-              Nenhuma entrega registrada.
-            </td>
-          </tr>
-        `;
-
-      // Tabela resgates
-      document.getElementById("tabelaResgates").innerHTML =
-        resgates.length ? resgates.map(r => `
-          <tr>
-            <td>${r.cod_resg}</td>
-            <td>${r.data_resg}</td>
-            <td>${r.catalogo}</td>
-            <td>
-              <span class="badge badge-saida">
-                -${r.pontos} pts
-              </span>
-            </td>
-          </tr>
-        `).join("") : `
-          <tr>
-            <td colspan="4" style="text-align:center; color:var(--texto-secundario);">
-              Nenhum resgate efetuado.
-            </td>
-          </tr>
-        `;
-
-      // Extrato unificado
-      const movs = [
-
-        ...entregas.map(e => ({
-          data: e.data_a,
-          tipo: 'ENTRADA',
-          desc: `Entrega ${e.cod_entrega} (${e.pontoNome})`,
-          pts: `+${e.total_pontos}`
-        })),
-
-        ...resgates.map(r => ({
-          data: r.data_resg,
-          tipo: 'SAÍDA',
-          desc: `Resgate: ${r.catalogo}`,
-          pts: `-${r.pontos}`
-        }))
-
-      ];
-
-      document.getElementById("tabelaExtrato").innerHTML =
-        movs.length ? movs.map(m => `
-          <tr>
-            <td>${m.data}</td>
-            <td>
-              <span class="badge ${m.tipo === 'ENTRADA' ? 'badge-entrada' : 'badge-saida'}">
-                ${m.tipo}
-              </span>
-            </td>
-            <td>${m.desc}</td>
-            <td><strong>${m.pts} pts</strong></td>
-          </tr>
-        `).join("") : `
-          <tr>
-            <td colspan="4" style="text-align:center; color:var(--texto-secundario);">
-              Sem movimentações no período.
-            </td>
-          </tr>
-        `;
-    }
-
-    function adicionarItemCarrinho() {
-
-      const cod_m = document.getElementById("entMaterial").value;
-
-      const kg = parseFloat(
-        document.getElementById("entPeso").value
-      );
-
-      if (!cod_m || isNaN(kg) || kg <= 0) {
-        return alert("Informe um peso válido maior que zero.");
-      }
-
-      const mat = materiais.find(m => m.cod_m === cod_m);
-
-      const pontos = Math.round(kg * mat.ponto_kg);
-
-      itensCarrinho.push({
-        cod_m,
-        tipo: mat.tipo,
-        kg,
-        pontos
-      });
-
-      document.getElementById("entPeso").value = "";
-
-      renderizarCarrinho();
-    }
-
-    function removerItemCarrinho(idx) {
-
-      itensCarrinho.splice(idx, 1);
-
-      renderizarCarrinho();
-    }
-
-    function renderizarCarrinho() {
-
-      const box = document.getElementById("boxItensEntrega");
-
-      const tbody = document.getElementById("tabelaCarrinhoEntrega");
-
-      if (!itensCarrinho.length) {
-
-        box.style.display = "none";
-
-        document.getElementById("previaPontosEntrega").textContent = "0";
-
-        return;
-      }
-
-      box.style.display = "block";
-
-      tbody.innerHTML = itensCarrinho.map((item, i) => `
-        <tr>
-          <td>${item.cod_m} (${item.tipo})</td>
-          <td>${item.kg.toFixed(2)} kg</td>
-          <td>${item.pontos} pts</td>
-          <td>
-            <button
-              type="button"
-              class="btn-sair"
-              style="padding:4px 8px;"
-              onclick="removerItemCarrinho(${i})">
-              Remover
-            </button>
-          </td>
-        </tr>
-      `).join("");
-
-      const total = itensCarrinho.reduce(
-        (acc, i) => acc + i.pontos,
-        0
-      );
-
-      document.getElementById("previaPontosEntrega").textContent =
-        total;
-    }
-
-    function salvarEntrega(e) {
-
-      e.preventDefault();
-
-      const idPonto = Number(
-        document.getElementById("entPonto").value
-      );
-
-      if (!idPonto) {
-        return alert("Selecione o ponto de coleta.");
-      }
-
-      if (!itensCarrinho.length) {
-        return alert("Adicione pelo menos um material reciclável.");
-      }
-
-      const ponto = pontosColeta.find(p => p.id === idPonto);
-
-      const total_pontos = itensCarrinho.reduce(
-        (acc, i) => acc + i.pontos,
-        0
-      );
-
-      const pesoTotal = itensCarrinho.reduce(
-        (acc, i) => acc + i.kg,
-        0
-      );
-
-      const agora = new Date();
-
-      entregas.unshift({
-
-        cod_entrega: "ENT" + String(Date.now()).slice(-6),
-
-        id: idPonto,
-
-        cpf: usuarioAtivo.cpf,
-
-        pontoNome: ponto.nome,
-
-        data_a: agora.toLocaleDateString("pt-BR"),
-
-        hora: agora.toTimeString().slice(0, 5),
-
-        total_pontos,
-
-        pesoTotal,
-
-        resumoItens: itensCarrinho.map(
-          i => `${i.tipo} (${i.kg}kg)`
-        ).join(", ")
-
-      });
-
-      usuarioAtivo.pontos += total_pontos;
-
-      salvarEstadoLocal();
-
-      itensCarrinho = [];
-
-      renderizarCarrinho();
-
-      atualizarInterface();
-
-      alert(
-        `Entrega registrada! +${total_pontos} pontos adicionados ao saldo.`
-      );
-    }
-
-    function realizarResgate(e) {
-
-      e.preventDefault();
-
-      const cod_recomp =
-        document.getElementById("selectRecompensa").value;
-
-      const rec = recompensas.find(
-        r => r.cod_recomp === cod_recomp
-      );
-
-      if (!rec) return;
-
-      if (usuarioAtivo.pontos < rec.registro_pontos) {
-
-        return alert(
-          `Saldo insuficiente! Você possui ${usuarioAtivo.pontos} pts e precisa de ${rec.registro_pontos} pts.`
-        );
-      }
-
-      usuarioAtivo.pontos -= rec.registro_pontos;
-
-      resgates.unshift({
-
-        cod_resg: "RSG" + String(Date.now()).slice(-6),
-
-        cod_recomp: rec.cod_recomp,
-
-        cpf: usuarioAtivo.cpf,
-
-        catalogo: rec.catalogo,
-
-        pontos: rec.registro_pontos,
-
-        data_resg: new Date().toLocaleDateString("pt-BR")
-
-      });
-
-      salvarEstadoLocal();
-
-      atualizarInterface();
-
-      alert(`Resgate de "${rec.catalogo}" confirmado!`);
-    }
-
-    function cadastrarPonto(e) {
-
-      e.preventDefault();
-
-      pontosColeta.push({
-
-        id: pontosColeta.length + 1,
-
-        nome: document.getElementById("novoPontoNome").value.trim(),
-
-        end: document.getElementById("novoPontoEnd").value.trim(),
-
-        tel: document.getElementById("novoPontoTel").value.trim()
-
-      });
-
-      e.target.reset();
-
-      salvarEstadoLocal();
-
-      atualizarInterface();
-
-      alert("Ponto de coleta cadastrado!");
-    }
-
-    function cadastrarMaterial(e) {
-
-      e.preventDefault();
-
-      materiais.push({
-
-        cod_m: document.getElementById("novoMatCod").value.trim().toUpperCase(),
-
-        tipo: document.getElementById("novoMatTipo").value.trim().toUpperCase(),
-
-        nome: "",
-
-        ponto_kg: Number(
-          document.getElementById("novoMatPontos").value
-        )
-
-      });
-
-      e.target.reset();
-
-      salvarEstadoLocal();
-
-      atualizarInterface();
-
-      alert("Material cadastrado!");
-    }
-
-    function cadastrarRecompensa(e) {
-
-      e.preventDefault();
-
-      recompensas.push({
-
-        cod_recomp: "REC" + String(
-          recompensas.length + 1
-        ).padStart(3, "0"),
-
-        catalogo: document.getElementById("novaRecNome").value.trim(),
-
-        registro_pontos: Number(
-          document.getElementById("novaRecPontos").value
-        )
-
-      });
-
-      e.target.reset();
-
-      salvarEstadoLocal();
-
-      atualizarInterface();
-
-      alert("Recompensa adicionada ao catálogo!");
-    }
-
-    atualizarInterface();
-
-  </script>
+    <!-- JAVASCRIPT -->
+    <script src="menu.js"></script>
 
 </body>
 </html>
