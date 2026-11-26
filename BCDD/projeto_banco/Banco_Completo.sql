@@ -1,6 +1,7 @@
-drop database CoopRecicla;
 create database CoopRecicla;
 use CoopRecicla;
+
+
 
 
 create table if not exists Usuario(
@@ -27,20 +28,23 @@ senha varchar(8) not null,
 foreign key(cpf)references Usuario(cpf)
 );
 
+
 create table if not exists ponto_coleta(
 id int auto_increment,
 nome varchar(50),
-end varchar(100),
+ende varchar(100),
 tel varchar (11),
 primary key (id)
 );
 
+
 create table  if not exists material (
-tipo varchar(3),
+tipo varchar(3) not null,
 ponto_kg int,
-cod_m varchar(9),
+cod_m varchar(9) not null,
 primary key (cod_m)
 );
+
 
 create table  if not exists entrega(
 id int not null,
@@ -55,12 +59,15 @@ foreign key (id) references ponto_coleta (id)
 );
 
 
+
+
 create table if not exists recompensa(
-cod_recomp varchar (9),
+cod_recomp varchar (9) not null ,
 registro_pontos int not null,
 catalogo varchar(50) not null ,
 primary key (cod_recomp)
 );
+
 
 create table  if not exists resgate(
 cod_recomp varchar (9) not null ,
@@ -74,47 +81,59 @@ foreign key (cod_recomp) references recompensa(cod_recomp)
 
 
 
+
+
+
 create table if not exists item_entrega(
-cod_m varchar (9),
-cod_entrega varchar (9),
- codigoE varchar(9),
+cod_m varchar (9) not null ,
+cod_entrega varchar (9) not null ,
+ codigoE varchar(9) not null ,
  kg decimal(7,2) not null,
 primary key (codigoE),
 foreign key (cod_entrega) references entrega (cod_entrega),
 foreign key(cod_m) references material (cod_m)
 );
 
-insert into usuario values
-('12345678901', '82999991111', 'João Silva', 'joao@gmail.com', '12345678'),
-('23456789012', '82988882222', 'Maria Santos', 'maria@gmail.com', '23456789'),
-('34567890123', '82977773333', 'Pedro Oliveira', 'pedro@gmail.com', '34567890'),
-('45678901234', '82966664444', 'Ana Costa', 'ana@gmail.com', '45678901'),
-('56789012345', '82955556666', 'Lucas Souza', 'lucas@gmail.com', '56789012'),
-('67890123456', '82944447777', 'Carla Lima', 'carla@gmail.com', '67890123'),
-('78901234567', '82933334444', 'Fernanda Alves', 'fernanda@gmail.com', '78901234'),
-('89012345678', '82922225555', 'Rafael Martins', 'rafael@gmail.com', '89012345'),
-('90123456789', '82911116666', 'Beatriz Rocha', 'beatriz@gmail.com', '90123456'),
-('01234567890', '82900007777', 'Gabriel Ferreira', 'gabriel@gmail.com', '01234567');
+
+INSERT INTO Usuario (cpf, tel, nome, email, senha)
+VALUES
+('12345678901', '82999991111', 'João Silva', 'joao@gmail.com', 'Jo@1234!'),
+('23456789012', '82988882222', 'Maria Santos', 'maria@gmail.com', 'Ma@2345!'),
+('34567890123', '82977773333', 'Pedro Oliveira', 'pedro@gmail.com', 'Pe@3456!'),
+('45678901234', '82966664444', 'Ana Costa', 'ana@gmail.com', 'An@4567!'),
+('56789012345', '82955556666', 'Lucas Souza', 'lucas@gmail.com', 'Lu@5678!'),
+('67890123456', '82944447777', 'Carla Lima', 'carla@gmail.com', 'Ca@6789!'),
+('78901234567', '82933334444', 'Fernanda Alves', 'fernanda@gmail.com', 'Fe@7890!'),
+('89012345678', '82922225555', 'Rafael Martins', 'rafael@gmail.com', 'Ra@8901!'),
+('90123456789', '82911116666', 'Beatriz Rocha', 'beatriz@gmail.com', 'Be@9012!'),
+('01234567890', '82900007777', 'Gabriel Ferreira', 'gabriel@gmail.com', 'Ga@0123!');
 
 
 
-insert into morador values
-('12345678901', 'Rua das Flores, 120', 150, '12345678'),
-('23456789012', 'Av. Brasil, 250', 300, '23456789'),
-('34567890123', 'Rua do Sol, 80', 200, '34567890'),
-('45678901234', 'Rua Verde, 45', 450, '45678901'),
-('56789012345', 'Rua Nova, 200', 100, '56789012'),
-('67890123456', 'Rua das Palmeiras, 90', 180, '67890123'),
-('78901234567', 'Rua Azul, 150', 220, '78901234'),
-('89012345678', 'Av. Nordeste, 400', 350, '89012345'),
-('90123456789', 'Rua das Acácias, 70', 160, '90123456'),
-('01234567890', 'Rua Esperança, 300', 280, '01234567');
 
-insert into adm values
-('56789012345', true, '56789012'),
-('67890123456', false, '67890123');
 
-insert into ponto_coleta (nome, end, tel) values
+
+INSERT INTO Morador (cpf, endereco, pontos, senha)
+VALUES
+('12345678901', 'Rua das Flores, 120', 150, 'Jo@1234!'),
+('23456789012', 'Av. Brasil, 250', 300, 'Ma@2345!'),
+('34567890123', 'Rua do Sol, 80', 200, 'Pe@3456!'),
+('45678901234', 'Rua Verde, 45', 450, 'An@4567!'),
+('56789012345', 'Rua Nova, 200', 100, 'Lu@5678!'),
+('67890123456', 'Rua das Palmeiras, 90', 180, 'Ca@6789!'),
+('78901234567', 'Rua Azul, 150', 220, 'Fe@7890!'),
+('89012345678', 'Av. Nordeste, 400', 350, 'Ra@8901!'),
+('90123456789', 'Rua das Acácias, 70', 160, 'Be@9012!'),
+('01234567890', 'Rua Esperança, 300', 280, 'Ga@0123!');
+
+
+INSERT INTO ADM (cpf, status_adm, senha)
+VALUES
+('56789012345', TRUE, 'Lu@5678!'),
+('67890123456', FALSE, 'Ca@6789!');
+
+
+insert into ponto_coleta (nome, ende, tel) values
 ('Eco Ponto Centro', 'Rua Principal, 100', '82999990001'),
 ('Recicla Mais', 'Av. Brasil, 250', '82999990002'),
 ('Ponto Verde', 'Rua das Flores, 50', '82999990003'),
@@ -125,6 +144,7 @@ insert into ponto_coleta (nome, end, tel) values
 ('Reciclagem Total', 'Rua do Comércio, 80', '82999990008'),
 ('Ponto Sustentável', 'Av. Esperança, 350', '82999990009'),
 ('Eco Nordeste', 'Rua da União, 500', '82999990010');
+
 
 insert into material (tipo, ponto_kg, cod_m) values
 ('PET', 10, 'MAT000001'),
@@ -138,6 +158,7 @@ insert into material (tipo, ponto_kg, cod_m) values
 ('LAT', 18, 'MAT000009'),
 ('PLA', 11, 'MAT000010');
 
+
 insert into entrega (cpf, cod_entrega, hora, total_pontos, data_a, id) values
 ('12345678901', 'ENT000001', '08:30:00', 100, '2026-10-01', 1),
 ('23456789012', 'ENT000002', '09:15:00', 150, '2026-10-02', 2),
@@ -149,6 +170,7 @@ insert into entrega (cpf, cod_entrega, hora, total_pontos, data_a, id) values
 ('89012345678', 'ENT000008', '10:30:00', 190, '2026-10-13', 8),
 ('90123456789', 'ENT000009', '13:00:00', 140, '2026-10-14', 9),
 ('01234567890', 'ENT000010', '15:00:00', 210, '2026-10-15', 10);
+
 
 insert into recompensa (cod_recomp, registro_pontos, catalogo) values
 ('REC000001', 100, 'Garrafa reutilizável'),
@@ -162,6 +184,7 @@ insert into recompensa (cod_recomp, registro_pontos, catalogo) values
 ('REC000009', 280, 'Vaso sustentável'),
 ('REC000010', 350, 'Composteira doméstica');
 
+
 insert into resgate (cpf, cod_recomp, cod_resg, data_resg) values
 ('12345678901', 'REC000001', 'RES000001', '2026-10-06'),
 ('23456789012', 'REC000002', 'RES000002', '2026-10-07'),
@@ -173,6 +196,7 @@ insert into resgate (cpf, cod_recomp, cod_resg, data_resg) values
 ('89012345678', 'REC000008', 'RES000008', '2026-10-18'),
 ('90123456789', 'REC000009', 'RES000009', '2026-10-19'),
 ('01234567890', 'REC000010', 'RES000010', '2026-10-20');
+
 
 insert into item_entrega (cod_m, cod_entrega, codigoE, kg) values
 ('MAT000001', 'ENT000001', 'ITE000001', 5.00),
@@ -187,6 +211,8 @@ insert into item_entrega (cod_m, cod_entrega, codigoE, kg) values
 ('MAT000010', 'ENT000010', 'ITE000010', 4.50);
 
 
+
+
 create view vw_infoALL as
 select u.nome , u.cpf , u.tel , u.email , coalesce (m.pontos,0) as pontos , coalesce(a.status_adm,false) as status , coalesce(m.endereco,'Não Informado') as endereco 
 from Usuario as u 
@@ -194,12 +220,14 @@ Left Join Morador as m ON u.cpf = m.cpf
 Left JOIN ADM as a on 
 u.cpf=a.cpf;
 
+
 create view vw_loc as
-select p.nome , p.end, p.tel , e.data_a , u.email
+select p.nome , p.ende, p.tel , e.data_a , u.email
 from ponto_coleta as p 
 INNER Join entrega as e ON
 p.id = e.id
 INNER join Usuario as u on u.cpf = e.cpf;
+
 
 create view vw_catalogo_recompensas as
 select
@@ -210,10 +238,40 @@ res.data_resg
 from recompensa as r
 left join resgate as res on r.cod_recomp = res.cod_recomp;
 
+
 select cpf, count(*) as quantidade_entregas
 from entrega
 group by cpf;
 
+
 select * from vw_loc ;
 select * from vw_infoALL;
-select * from vw_catalogo_recompensas
+select * from vw_catalogo_recompensas;
+
+
+insert into Usuario (
+    cpf,
+    nome,
+    email,
+    tel,
+    senha
+)
+values (
+    '11223344556',
+    'Administrador Geral',
+    'cinfoksv@gmail.com',
+    '82999673531',
+    'KSV1234@'
+);
+
+insert into ADM (
+    cpf,
+    status_adm,
+    senha
+)
+values (
+    '11223344556',
+    true,
+    'KSV1234@'
+);
+
