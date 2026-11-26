@@ -25,7 +25,7 @@ app.use('/', materiaisRoutes);
 app.use('/', recompensasRoutes);
 app.use('/', entregasRoutes);
 app.use('/', relatoriosRoutes);
-
+app.use('/', resgatesRoutes);
 
 
 app.get('/', (req, res) => {
