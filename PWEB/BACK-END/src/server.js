@@ -1,6 +1,7 @@
 
 const express = require('express');
 const cors = require('cors');
+const crypto = require('crypto');
 
 const db = require('../conexao');
 const banco = db.promise();
@@ -13,55 +14,39 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // =====================================
-// IMPORTAR DAOs
+// FUNÇÕES AUXILIARES
 // =====================================
 
-const PontoColetaDAO = require('../../../POO/CoopRecicla/PontoColetaDAO')
-const RecompensaDAO = require('../../../POO/CoopRecicla/RecompensaDAO');
-const MaterialDAO = require('../../../POO/CoopRecicla/MaterialDAO')
-const ItemEntregaDAO = require('../../../POO/CoopRecicla/ItemEntregaDAO');
-const ResgateDAO = require('../../../POO/CoopRecicla/ResgateDAO');
-const ADMDAO = require('../../../POO/CoopRecicla/ADMDAO');
+function gerarCodigo() {
+    return crypto.randomBytes(8)
+        .toString('hex')
+        .substring(0, 9)
+        .toUpperCase();
+}
 
-// =====================================
-// IMPORTAR CLASSES
-// =====================================
+function gerarCodigoRecompensa() {
+    return 'R' + crypto.randomBytes(4)
+        .toString('hex')
+        .substring(0, 8)
+        .toUpperCase();
+}
 
-const PontoColeta = require('../../../POO/CoopRecicla/PontoColeta');
-const Recompensa = require('../../../POO/CoopRecicla/Recompensa');
-const Material = require('../../../POO/CoopRecicla/Material');
-const ItemEntrega = require('../../../POO/CoopRecicla/ItemEntrega');
-const Resgate = require('../../../POO/CoopRecicla/Resgate');
-const ADM = require('../../../POO/CoopRecicla/ADM');
+function gerarCodigoEntrega() {
+    return 'E' + crypto.randomBytes(4)
+        .toString('hex')
+        .substring(0, 8)
+        .toUpperCase();
+}
 
-// =====================================
-// INSTANCIAR DAOs
-// =====================================
+function gerarCodigoItem() {
+    return 'I' + crypto.randomBytes(4)
+        .toString('hex')
+        .substring(0, 8)
+        .toUpperCase();
+}
 
-const pontoDAO = new PontoColetaDAO();
-const recompensaDAO = new RecompensaDAO();
-const materialDAO = new MaterialDAO();
-const itemEntregaDAO = new ItemEntregaDAO();
-const resgateDAO = new ResgateDAO();
-const admDAO = new ADMDAO();
-
-// Transformar callbacks dos DAOs em Promises
-function executarDAO(dao, metodo, parametro) {
-    return new Promise((resolve, reject) => {
-        const callback = (erro, resultado) => {
-            if (erro) {
-                reject(erro);
-            } else {
-                resolve(resultado);
-            }
-        };
-
-        if (parametro === undefined) {
-            dao[metodo](callback);
-        } else {
-            dao[metodo](parametro, callback);
-        }
-    });
+function cpfValido(cpf) {
+    return /^\d{11}$/.test(String(cpf || ''));
 }
 
 // =====================================
@@ -69,7 +54,7 @@ function executarDAO(dao, metodo, parametro) {
 // =====================================
 
 async function verificarAdmin(cpf) {
-    if (!cpf) return false;
+    if (!cpfValido(cpf)) return false;
 
     const [resultado] = await banco.query(
         `SELECT cpf
@@ -123,7 +108,7 @@ app.post('/usuarios', async (req, res) => {
         });
     }
 
-    if (!/^\d{11}$/.test(String(cpf))) {
+    if (!cpfValido(cpf)) {
         return res.status(400).json({
             mensagem: 'CPF deve conter 11 números.'
         });
@@ -141,7 +126,9 @@ app.post('/usuarios', async (req, res) => {
         await conexao.beginTransaction();
 
         const [existente] = await conexao.query(
-            'SELECT cpf FROM Usuario WHERE cpf = ? OR email = ?',
+            `SELECT cpf
+             FROM Usuario
+             WHERE cpf = ? OR email = ?`,
             [cpf, email]
         );
 
@@ -161,11 +148,12 @@ app.post('/usuarios', async (req, res) => {
         );
 
         await conexao.query(
-    `INSERT INTO Morador
-     (cpf, endereco, pontos)
-     VALUES (?, ?, 0)`,
-    [cpf, endereco]
-);
+            `INSERT INTO Morador
+             (cpf, endereco, pontos, senha)
+             VALUES (?, ?, 0, ?)`,
+            [cpf, endereco, senha]
+        );
+
         await conexao.commit();
 
         return res.status(201).json({
@@ -237,8 +225,10 @@ app.post('/login', async (req, res) => {
             Number(usuario.status_adm) === 1
         ) {
             perfil = 'ADM';
+
         } else if (usuario.cpf_morador) {
             perfil = 'MORADOR';
+
         } else {
             return res.status(403).json({
                 mensagem: 'Usuário sem perfil ativo.'
@@ -336,7 +326,7 @@ app.get('/moradores/:cpf', async (req, res) => {
         return res.json(moradores[0]);
 
     } catch (erro) {
-        console.error('Erro ao buscar morador:', erro);
+        console.error(erro);
 
         return res.status(500).json({
             mensagem: 'Erro ao buscar cadastro.'
@@ -390,7 +380,9 @@ app.put('/moradores/:cpf', async (req, res) => {
         }
 
         const [emailExistente] = await conexao.query(
-            'SELECT cpf FROM Usuario WHERE email = ? AND cpf <> ?',
+            `SELECT cpf
+             FROM Usuario
+             WHERE email = ? AND cpf <> ?`,
             [email, cpf]
         );
 
@@ -423,7 +415,7 @@ app.put('/moradores/:cpf', async (req, res) => {
     } catch (erro) {
         await conexao.rollback();
 
-        console.error('Erro ao editar morador:', erro);
+        console.error(erro);
 
         return res.status(500).json({
             mensagem: 'Erro ao atualizar cadastro.'
@@ -447,9 +439,15 @@ app.post('/administradores/promover', async (req, res) => {
         });
     }
 
+    if (!cpfValido(cpf)) {
+        return res.status(400).json({
+            mensagem: 'CPF inválido.'
+        });
+    }
+
     try {
         const [usuarios] = await banco.query(
-            'SELECT cpf, senha FROM Usuario WHERE cpf = ?',
+            'SELECT cpf FROM Usuario WHERE cpf = ?',
             [cpf]
         );
 
@@ -459,19 +457,28 @@ app.post('/administradores/promover', async (req, res) => {
             });
         }
 
-        const senhaUsuario = usuarios[0].senha;
-
-        const adm = new ADM(cpf, true, senhaUsuario);
-
-        const [admExistente] = await banco.query(
+        const [existente] = await banco.query(
             'SELECT cpf FROM ADM WHERE cpf = ?',
             [cpf]
         );
 
-        if (admExistente.length > 0) {
-            await executarDAO(admDAO, 'atualizar', adm);
+        if (existente.length > 0) {
+            await banco.query(
+                'UPDATE ADM SET status_adm = TRUE WHERE cpf = ?',
+                [cpf]
+            );
+
         } else {
-            await executarDAO(admDAO, 'cadastrar', adm);
+            const [usuario] = await banco.query(
+                'SELECT senha FROM Usuario WHERE cpf = ?',
+                [cpf]
+            );
+
+            await banco.query(
+                `INSERT INTO ADM (cpf, status_adm, senha)
+                 VALUES (?, TRUE, ?)`,
+                [cpf, usuario[0].senha]
+            );
         }
 
         return res.json({
@@ -479,10 +486,10 @@ app.post('/administradores/promover', async (req, res) => {
         });
 
     } catch (erro) {
-        console.error('Erro ao promover usuário:', erro);
+        console.error(erro);
 
         return res.status(500).json({
-            mensagem: erro.message || 'Erro ao promover usuário.'
+            mensagem: 'Erro ao promover usuário.'
         });
     }
 });
@@ -491,17 +498,25 @@ app.post('/administradores/promover', async (req, res) => {
 // PONTOS DE COLETA
 // =====================================
 
-// LISTAR
+// LISTAR PONTOS
 app.get('/pontos-coleta', async (req, res) => {
     try {
-        if (!(await exigirAdmin(req, res))) return;
-
-        const pontos = await executarDAO(pontoDAO, 'listar');
+        const [pontos] = await banco.query(
+            `SELECT
+                id,
+                nome,
+                ende,
+                ende AS endereco,
+                ende AS \`end\`,
+                tel
+             FROM ponto_coleta
+             ORDER BY nome`
+        );
 
         return res.json(pontos);
 
     } catch (erro) {
-        console.error(erro);
+        console.error('Erro ao listar pontos:', erro);
 
         return res.status(500).json({
             mensagem: 'Erro ao listar pontos de coleta.'
@@ -509,24 +524,30 @@ app.get('/pontos-coleta', async (req, res) => {
     }
 });
 
-// CADASTRAR
+// CADASTRAR PONTO
 app.post('/pontos-coleta', async (req, res) => {
     try {
         if (!(await exigirAdmin(req, res))) return;
 
-        const { nome, end, tel } = req.body;
+        const nome = req.body.nome;
+        const endereco =
+            req.body.endereco ||
+            req.body.ende ||
+            req.body.end;
 
-        const ponto = new PontoColeta(
-            null,
-            nome,
-            end,
-            tel || ''
-        );
+        const tel = req.body.tel || '';
 
-        const resultado = await executarDAO(
-            pontoDAO,
-            'cadastrar',
-            ponto
+        if (!nome || !endereco) {
+            return res.status(400).json({
+                mensagem: 'Informe o nome e o endereço do ponto.'
+            });
+        }
+
+        const [resultado] = await banco.query(
+            `INSERT INTO ponto_coleta
+             (nome, ende, tel)
+             VALUES (?, ?, ?)`,
+            [nome, endereco, tel]
         );
 
         return res.status(201).json({
@@ -535,39 +556,46 @@ app.post('/pontos-coleta', async (req, res) => {
         });
 
     } catch (erro) {
-        console.error(erro);
+        console.error('Erro ao cadastrar ponto:', erro);
 
-        return res.status(400).json({
-            mensagem: erro.message || 'Erro ao cadastrar ponto.'
+        return res.status(500).json({
+            mensagem: 'Erro ao cadastrar ponto.'
         });
     }
 });
 
-// ATUALIZAR
+// ATUALIZAR PONTO
 app.put('/pontos-coleta/:id', async (req, res) => {
     try {
         if (!(await exigirAdmin(req, res))) return;
 
-        const id = Number(req.params.id);
-        const { nome, end, tel } = req.body;
+        const nome = req.body.nome;
 
-        if (!Number.isInteger(id) || id <= 0) {
+        const endereco =
+            req.body.endereco ||
+            req.body.ende ||
+            req.body.end;
+
+        const tel = req.body.tel || '';
+
+        const id = Number(req.params.id);
+
+        if (
+            !Number.isInteger(id) ||
+            id <= 0 ||
+            !nome ||
+            !endereco
+        ) {
             return res.status(400).json({
-                mensagem: 'ID inválido.'
+                mensagem: 'Dados inválidos para atualizar o ponto.'
             });
         }
 
-        const ponto = new PontoColeta(
-            id,
-            nome,
-            end,
-            tel || ''
-        );
-
-        const resultado = await executarDAO(
-            pontoDAO,
-            'atualizar',
-            ponto
+        const [resultado] = await banco.query(
+            `UPDATE ponto_coleta
+             SET nome = ?, ende = ?, tel = ?
+             WHERE id = ?`,
+            [nome, endereco, tel, id]
         );
 
         if (resultado.affectedRows === 0) {
@@ -581,23 +609,30 @@ app.put('/pontos-coleta/:id', async (req, res) => {
         });
 
     } catch (erro) {
-        console.error(erro);
+        console.error('Erro ao atualizar ponto:', erro);
 
-        return res.status(400).json({
-            mensagem: erro.message || 'Erro ao atualizar ponto.'
+        return res.status(500).json({
+            mensagem: 'Erro ao atualizar ponto.'
         });
     }
 });
 
-// EXCLUIR
+// EXCLUIR PONTO
 app.delete('/pontos-coleta/:id', async (req, res) => {
     try {
         if (!(await exigirAdmin(req, res))) return;
 
-        const resultado = await executarDAO(
-            pontoDAO,
-            'excluir',
-            Number(req.params.id)
+        const id = Number(req.params.id);
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({
+                mensagem: 'ID do ponto inválido.'
+            });
+        }
+
+        const [resultado] = await banco.query(
+            'DELETE FROM ponto_coleta WHERE id = ?',
+            [id]
         );
 
         if (resultado.affectedRows === 0) {
@@ -611,7 +646,7 @@ app.delete('/pontos-coleta/:id', async (req, res) => {
         });
 
     } catch (erro) {
-        console.error(erro);
+        console.error('Erro ao excluir ponto:', erro);
 
         return res.status(500).json({
             mensagem: 'Não foi possível remover o ponto. Verifique se existem entregas vinculadas.'
@@ -620,17 +655,78 @@ app.delete('/pontos-coleta/:id', async (req, res) => {
 });
 
 // =====================================
-// RECOMPENSAS
+// MATERIAIS
 // =====================================
 
-// LISTAR
-app.get('/recompensas', async (req, res) => {
+// LISTAR MATERIAIS
+app.get('/materiais', async (req, res) => {
+    try {
+        const [materiais] = await banco.query(
+            `SELECT cod_m, tipo, ponto_kg
+             FROM material
+             ORDER BY tipo`
+        );
+
+        return res.json(materiais);
+
+    } catch (erro) {
+        console.error(erro);
+
+        return res.status(500).json({
+            mensagem: 'Erro ao listar materiais.'
+        });
+    }
+});
+
+// CADASTRAR MATERIAL
+app.post('/materiais', async (req, res) => {
     try {
         if (!(await exigirAdmin(req, res))) return;
 
-        const recompensas = await executarDAO(
-            recompensaDAO,
-            'listar'
+        const { cod_m, tipo, ponto_kg } = req.body;
+
+        if (
+            !cod_m ||
+            !tipo ||
+            !Number.isFinite(Number(ponto_kg)) ||
+            Number(ponto_kg) <= 0
+        ) {
+            return res.status(400).json({
+                mensagem: 'Informe os dados válidos do material.'
+            });
+        }
+
+        await banco.query(
+            `INSERT INTO material
+             (cod_m, tipo, ponto_kg)
+             VALUES (?, ?, ?)`,
+            [cod_m, tipo, Number(ponto_kg)]
+        );
+
+        return res.status(201).json({
+            mensagem: 'Material cadastrado!'
+        });
+
+    } catch (erro) {
+        console.error(erro);
+
+        return res.status(400).json({
+            mensagem: 'Erro ao cadastrar material.'
+        });
+    }
+});
+
+// =====================================
+// RECOMPENSAS
+// =====================================
+
+// LISTAR RECOMPENSAS
+app.get('/recompensas', async (req, res) => {
+    try {
+        const [recompensas] = await banco.query(
+            `SELECT cod_recomp, registro_pontos, catalogo
+             FROM recompensa
+             ORDER BY registro_pontos`
         );
 
         return res.json(recompensas);
@@ -644,7 +740,7 @@ app.get('/recompensas', async (req, res) => {
     }
 });
 
-// CADASTRAR
+// CADASTRAR RECOMPENSA
 app.post('/recompensas', async (req, res) => {
     try {
         if (!(await exigirAdmin(req, res))) return;
@@ -655,47 +751,63 @@ app.post('/recompensas', async (req, res) => {
             catalogo
         } = req.body;
 
-        const recompensa = new Recompensa(
-            cod_recomp,
-            Number(registro_pontos),
-            catalogo
-        );
+        if (
+            !cod_recomp ||
+            !catalogo ||
+            !Number.isFinite(Number(registro_pontos)) ||
+            Number(registro_pontos) <= 0
+        ) {
+            return res.status(400).json({
+                mensagem: 'Informe os dados válidos da recompensa.'
+            });
+        }
 
-        const resultado = await executarDAO(
-            recompensaDAO,
-            'cadastrar',
-            recompensa
+        await banco.query(
+            `INSERT INTO recompensa
+             (cod_recomp, registro_pontos, catalogo)
+             VALUES (?, ?, ?)`,
+            [cod_recomp, Number(registro_pontos), catalogo]
         );
 
         return res.status(201).json({
-            mensagem: 'Recompensa cadastrada!',
-            resultado
+            mensagem: 'Recompensa cadastrada!'
         });
 
     } catch (erro) {
         console.error(erro);
 
         return res.status(400).json({
-            mensagem: erro.message || 'Erro ao cadastrar recompensa.'
+            mensagem: 'Erro ao cadastrar recompensa.'
         });
     }
 });
 
-// ATUALIZAR
+// ATUALIZAR RECOMPENSA
 app.put('/recompensas/:codigo', async (req, res) => {
     try {
         if (!(await exigirAdmin(req, res))) return;
 
-        const recompensa = new Recompensa(
-            req.params.codigo,
-            Number(req.body.registro_pontos),
-            req.body.catalogo
-        );
+        const { registro_pontos, catalogo } = req.body;
 
-        const resultado = await executarDAO(
-            recompensaDAO,
-            'atualizar',
-            recompensa
+        if (
+            !catalogo ||
+            !Number.isFinite(Number(registro_pontos)) ||
+            Number(registro_pontos) <= 0
+        ) {
+            return res.status(400).json({
+                mensagem: 'Informe os dados da recompensa.'
+            });
+        }
+
+        const [resultado] = await banco.query(
+            `UPDATE recompensa
+             SET registro_pontos = ?, catalogo = ?
+             WHERE cod_recomp = ?`,
+            [
+                Number(registro_pontos),
+                catalogo,
+                req.params.codigo
+            ]
         );
 
         if (resultado.affectedRows === 0) {
@@ -711,21 +823,20 @@ app.put('/recompensas/:codigo', async (req, res) => {
     } catch (erro) {
         console.error(erro);
 
-        return res.status(400).json({
-            mensagem: erro.message || 'Erro ao atualizar recompensa.'
+        return res.status(500).json({
+            mensagem: 'Erro ao atualizar recompensa.'
         });
     }
 });
 
-// EXCLUIR
+// EXCLUIR RECOMPENSA
 app.delete('/recompensas/:codigo', async (req, res) => {
     try {
         if (!(await exigirAdmin(req, res))) return;
 
-        const resultado = await executarDAO(
-            recompensaDAO,
-            'excluir',
-            req.params.codigo
+        const [resultado] = await banco.query(
+            'DELETE FROM recompensa WHERE cod_recomp = ?',
+            [req.params.codigo]
         );
 
         if (resultado.affectedRows === 0) {
@@ -748,69 +859,399 @@ app.delete('/recompensas/:codigo', async (req, res) => {
 });
 
 // =====================================
-// MATERIAIS
+// RESUMO DO MORADOR
 // =====================================
 
-app.get('/materiais', async (req, res) => {
+app.get('/moradores/:cpf/resumo', async (req, res) => {
     try {
-        if (!(await exigirAdmin(req, res))) return;
+        const cpf = req.params.cpf;
 
-        const materiais = await executarDAO(
-            materialDAO,
-            'listar'
+        const [moradores] = await banco.query(
+            `SELECT
+                u.cpf,
+                u.nome,
+                u.email,
+                m.pontos
+             FROM Usuario u
+             INNER JOIN Morador m ON m.cpf = u.cpf
+             WHERE u.cpf = ?`,
+            [cpf]
         );
 
-        return res.json(materiais);
+        if (moradores.length === 0) {
+            return res.status(404).json({
+                mensagem: 'Morador não encontrado.'
+            });
+        }
+
+        const [estatisticas] = await banco.query(
+            `SELECT
+                COUNT(DISTINCT e.cod_entrega) AS total_entregas,
+                COALESCE(SUM(ie.kg), 0) AS total_kg
+             FROM entrega e
+             LEFT JOIN item_entrega ie
+                ON ie.cod_entrega = e.cod_entrega
+             WHERE e.cpf = ?`,
+            [cpf]
+        );
+
+        return res.json({
+            ...moradores[0],
+            total_entregas: Number(estatisticas[0].total_entregas),
+            total_kg: Number(estatisticas[0].total_kg)
+        });
 
     } catch (erro) {
         console.error(erro);
 
         return res.status(500).json({
-            mensagem: 'Erro ao listar materiais.'
-        });
-    }
-});
-
-app.post('/materiais', async (req, res) => {
-    try {
-        if (!(await exigirAdmin(req, res))) return;
-
-        const material = new Material(
-            req.body.cod_m,
-            req.body.tipo,
-            Number(req.body.ponto_kg)
-        );
-
-        await executarDAO(
-            materialDAO,
-            'cadastrar',
-            material
-        );
-
-        return res.status(201).json({
-            mensagem: 'Material cadastrado!'
-        });
-
-    } catch (erro) {
-        console.error(erro);
-
-        return res.status(400).json({
-            mensagem: erro.message || 'Erro ao cadastrar material.'
+            mensagem: 'Erro ao carregar resumo do morador.'
         });
     }
 });
 
 // =====================================
-// ITENS DE ENTREGA
+// REGISTRAR ENTREGA
+// =====================================
+
+app.post('/entregas', async (req, res) => {
+    const { cpf, id, itens } = req.body;
+
+    if (
+        !cpfValido(cpf) ||
+        !id ||
+        !Array.isArray(itens) ||
+        itens.length === 0
+    ) {
+        return res.status(400).json({
+            mensagem: 'Informe o morador, o ponto de coleta e os materiais.'
+        });
+    }
+
+    const conexao = await banco.getConnection();
+
+    try {
+        await conexao.beginTransaction();
+
+        const [moradores] = await conexao.query(
+            'SELECT cpf FROM Morador WHERE cpf = ?',
+            [cpf]
+        );
+
+        if (moradores.length === 0) {
+            await conexao.rollback();
+
+            return res.status(404).json({
+                mensagem: 'Morador não encontrado.'
+            });
+        }
+
+        const [pontos] = await conexao.query(
+            'SELECT id FROM ponto_coleta WHERE id = ?',
+            [id]
+        );
+
+        if (pontos.length === 0) {
+            await conexao.rollback();
+
+            return res.status(404).json({
+                mensagem: 'Ponto de coleta não encontrado.'
+            });
+        }
+
+        let totalPontos = 0;
+        const itensValidados = [];
+
+        for (const item of itens) {
+            const kg = Number(item.kg);
+
+            if (!item.cod_m || !Number.isFinite(kg) || kg <= 0) {
+                await conexao.rollback();
+
+                return res.status(400).json({
+                    mensagem: 'Existe um material ou peso inválido.'
+                });
+            }
+
+            const [materiaisEncontrados] = await conexao.query(
+                `SELECT cod_m, tipo, ponto_kg
+                 FROM material
+                 WHERE cod_m = ?`,
+                [item.cod_m]
+            );
+
+            if (materiaisEncontrados.length === 0) {
+                await conexao.rollback();
+
+                return res.status(404).json({
+                    mensagem: `Material ${item.cod_m} não encontrado.`
+                });
+            }
+
+            const material = materiaisEncontrados[0];
+
+            const pontosItem = Math.round(
+                kg * Number(material.ponto_kg)
+            );
+
+            totalPontos += pontosItem;
+
+            itensValidados.push({
+                cod_m: material.cod_m,
+                kg,
+                pontos: pontosItem
+            });
+        }
+
+        const codEntrega = gerarCodigoEntrega();
+
+        await conexao.query(
+            `INSERT INTO entrega
+             (id, cpf, cod_entrega, hora, total_pontos, data_a)
+             VALUES (?, ?, ?, CURTIME(), ?, CURDATE())`,
+            [id, cpf, codEntrega, totalPontos]
+        );
+
+        for (const item of itensValidados) {
+            await conexao.query(
+                `INSERT INTO item_entrega
+                 (cod_m, cod_entrega, codigoE, kg)
+                 VALUES (?, ?, ?, ?)`,
+                [
+                    item.cod_m,
+                    codEntrega,
+                    gerarCodigoItem(),
+                    item.kg
+                ]
+            );
+        }
+
+        await conexao.query(
+            `UPDATE Morador
+             SET pontos = pontos + ?
+             WHERE cpf = ?`,
+            [totalPontos, cpf]
+        );
+
+        await conexao.commit();
+
+        return res.status(201).json({
+            mensagem: 'Entrega registrada com sucesso!',
+            cod_entrega: codEntrega,
+            total_pontos: totalPontos
+        });
+
+    } catch (erro) {
+        await conexao.rollback();
+
+        console.error('Erro ao registrar entrega:', erro);
+
+        return res.status(500).json({
+            mensagem: 'Erro ao registrar entrega.'
+        });
+
+    } finally {
+        conexao.release();
+    }
+});
+
+// =====================================
+// HISTÓRICO DE ENTREGAS DO MORADOR
+// =====================================
+
+app.get('/moradores/:cpf/entregas', async (req, res) => {
+    try {
+        const cpf = req.params.cpf;
+
+        const [entregas] = await banco.query(
+            `SELECT
+                e.cod_entrega,
+                e.data_a,
+                e.hora,
+                e.total_pontos,
+                p.nome AS ponto_nome
+             FROM entrega e
+             INNER JOIN ponto_coleta p ON p.id = e.id
+             WHERE e.cpf = ?
+             ORDER BY e.data_a DESC, e.hora DESC`,
+            [cpf]
+        );
+
+        for (const entrega of entregas) {
+            const [itens] = await banco.query(
+                `SELECT
+                    ie.cod_m,
+                    ie.kg,
+                    m.tipo
+                 FROM item_entrega ie
+                 INNER JOIN material m ON m.cod_m = ie.cod_m
+                 WHERE ie.cod_entrega = ?`,
+                [entrega.cod_entrega]
+            );
+
+            entrega.itens = itens;
+        }
+
+        return res.json(entregas);
+
+    } catch (erro) {
+        console.error(erro);
+
+        return res.status(500).json({
+            mensagem: 'Erro ao buscar entregas.'
+        });
+    }
+});
+
+// =====================================
+// REALIZAR RESGATE
+// =====================================
+
+app.post('/resgates', async (req, res) => {
+    const { cpf, cod_recomp } = req.body;
+
+    if (!cpfValido(cpf) || !cod_recomp) {
+        return res.status(400).json({
+            mensagem: 'Informe o morador e a recompensa.'
+        });
+    }
+
+    const conexao = await banco.getConnection();
+
+    try {
+        await conexao.beginTransaction();
+
+        const [moradores] = await conexao.query(
+            `SELECT pontos
+             FROM Morador
+             WHERE cpf = ?
+             FOR UPDATE`,
+            [cpf]
+        );
+
+        if (moradores.length === 0) {
+            await conexao.rollback();
+
+            return res.status(404).json({
+                mensagem: 'Morador não encontrado.'
+            });
+        }
+
+        const [recompensas] = await conexao.query(
+            `SELECT cod_recomp, registro_pontos, catalogo
+             FROM recompensa
+             WHERE cod_recomp = ?`,
+            [cod_recomp]
+        );
+
+        if (recompensas.length === 0) {
+            await conexao.rollback();
+
+            return res.status(404).json({
+                mensagem: 'Recompensa não encontrada.'
+            });
+        }
+
+        const saldo = Number(moradores[0].pontos);
+        const recompensa = recompensas[0];
+        const custo = Number(recompensa.registro_pontos);
+
+        if (saldo < custo) {
+            await conexao.rollback();
+
+            return res.status(400).json({
+                mensagem: 'Você não possui pontos suficientes.'
+            });
+        }
+
+        const codigoResgate = gerarCodigo();
+
+        await conexao.query(
+            `INSERT INTO resgate
+             (cod_recomp, cpf, cod_resg, data_resg)
+             VALUES (?, ?, ?, CURDATE())`,
+            [cod_recomp, cpf, codigoResgate]
+        );
+
+        await conexao.query(
+            `UPDATE Morador
+             SET pontos = pontos - ?
+             WHERE cpf = ?`,
+            [custo, cpf]
+        );
+
+        await conexao.commit();
+
+        return res.status(201).json({
+            mensagem: 'Resgate realizado com sucesso!',
+            cod_resg: codigoResgate,
+            pontos_utilizados: custo
+        });
+
+    } catch (erro) {
+        await conexao.rollback();
+
+        console.error('Erro ao realizar resgate:', erro);
+
+        return res.status(500).json({
+            mensagem: 'Erro ao realizar resgate.'
+        });
+
+    } finally {
+        conexao.release();
+    }
+});
+
+// =====================================
+// HISTÓRICO DE RESGATES DO MORADOR
+// =====================================
+
+app.get('/moradores/:cpf/resgates', async (req, res) => {
+    try {
+        const [resgates] = await banco.query(
+            `SELECT
+                r.cod_resg,
+                r.data_resg,
+                r.cod_recomp,
+                rec.catalogo,
+                rec.registro_pontos AS pontos
+             FROM resgate r
+             INNER JOIN recompensa rec
+                ON rec.cod_recomp = r.cod_recomp
+             WHERE r.cpf = ?
+             ORDER BY r.data_resg DESC`,
+            [req.params.cpf]
+        );
+
+        return res.json(resgates);
+
+    } catch (erro) {
+        console.error(erro);
+
+        return res.status(500).json({
+            mensagem: 'Erro ao buscar resgates.'
+        });
+    }
+});
+
+// =====================================
+// LISTAR ITENS DE ENTREGA - ADM
 // =====================================
 
 app.get('/itens-entrega', async (req, res) => {
     try {
         if (!(await exigirAdmin(req, res))) return;
 
-        const itens = await executarDAO(
-            itemEntregaDAO,
-            'listar'
+        const [itens] = await banco.query(
+            `SELECT
+                ie.cod_m,
+                ie.cod_entrega,
+                ie.codigoE,
+                ie.kg,
+                m.tipo
+             FROM item_entrega ie
+             INNER JOIN material m ON m.cod_m = ie.cod_m
+             ORDER BY ie.cod_entrega`
         );
 
         return res.json(itens);
@@ -825,16 +1266,25 @@ app.get('/itens-entrega', async (req, res) => {
 });
 
 // =====================================
-// RESGATES
+// LISTAR RESGATES - ADM
 // =====================================
 
 app.get('/resgates', async (req, res) => {
     try {
         if (!(await exigirAdmin(req, res))) return;
 
-        const resgates = await executarDAO(
-            resgateDAO,
-            'listar'
+        const [resgates] = await banco.query(
+            `SELECT
+                r.cod_resg,
+                r.cod_recomp,
+                r.cpf,
+                r.data_resg,
+                rec.catalogo,
+                rec.registro_pontos
+             FROM resgate r
+             INNER JOIN recompensa rec
+                ON rec.cod_recomp = r.cod_recomp
+             ORDER BY r.data_resg DESC`
         );
 
         return res.json(resgates);
@@ -849,7 +1299,7 @@ app.get('/resgates', async (req, res) => {
 });
 
 // =====================================
-// RELATÓRIOS
+// RELATÓRIOS - ADM
 // =====================================
 
 app.get('/relatorios', async (req, res) => {
@@ -860,8 +1310,8 @@ app.get('/relatorios', async (req, res) => {
             `SELECT
                 m.cod_m,
                 m.tipo,
-                SUM(ie.kg) AS total_kg,
-                SUM(ie.kg * m.ponto_kg) AS total_pontos
+                COALESCE(SUM(ie.kg), 0) AS total_kg,
+                COALESCE(SUM(ie.kg * m.ponto_kg), 0) AS total_pontos
              FROM material m
              LEFT JOIN item_entrega ie ON ie.cod_m = m.cod_m
              GROUP BY m.cod_m, m.tipo
