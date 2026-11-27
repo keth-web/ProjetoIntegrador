@@ -1,7 +1,8 @@
 
 class Entrega {
-#cpf
-    #cod_entrega
+    #cpf;
+    #cod_entrega;
+
     constructor(id, cpf, cod_entrega, hora, total_pontos, data_a) {
         this.id = id;
         this.#cpf = cpf;
@@ -28,7 +29,7 @@ class Entrega {
     }
 
     getCod_entrega() {
-        return this.cod_entrega;
+        return this.#cod_entrega;
     }
 
     setCod_entrega(cod_entrega) {
@@ -60,28 +61,28 @@ class Entrega {
     }
 
     validar() {
-    if (!this.#cpf || this.#cpf.length !== 11) {
-        throw new Error('CPF deve possuir 11 caracteres.');
-    }
+        if (!this.#cpf || String(this.#cpf).length !== 11) {
+            throw new Error('CPF deve possuir 11 caracteres.');
+        }
 
-    if (!this.#cod_entrega || this.#cod_entrega.length > 9) {
-        throw new Error('Código da entrega inválido.');
-    }
+        if (!this.#cod_entrega || String(this.#cod_entrega).length > 9) {
+            throw new Error('Código da entrega inválido.');
+        }
 
-    if (!Number.isInteger(this.id) || this.id <= 0) {
-        throw new Error('Ponto de coleta inválido.');
-    }
+        if (!Number.isInteger(Number(this.id)) || Number(this.id) <= 0) {
+            throw new Error('Ponto de coleta inválido.');
+        }
 
-    if (!Number.isInteger(this.total_pontos) || this.total_pontos < 0) {
-        throw new Error('Pontuação inválida.');
-    }
+        if (!Number.isInteger(Number(this.total_pontos)) || Number(this.total_pontos) < 0) {
+            throw new Error('Pontuação inválida.');
+        }
 
-    if (!this.hora || !this.data_a) {
-        throw new Error('Hora e data são obrigatórias.');
-    }
+        if (!this.hora || !this.data_a) {
+            throw new Error('Hora e data são obrigatórias.');
+        }
 
-    return true;
-}
+        return true;
+    }
 }
 
 module.exports = Entrega;

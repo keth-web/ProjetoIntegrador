@@ -11,7 +11,7 @@ class PontoColetaDAO {
         }
 
         const sql = `
-            INSERT INTO ponto_coleta (nome, \`end\`, tel)
+            INSERT INTO ponto_coleta (nome, ende, tel)
             VALUES (?, ?, ?)
         `;
 
@@ -23,18 +23,31 @@ class PontoColetaDAO {
     }
 
     listar(callback) {
-        db.query(
-            'SELECT * FROM ponto_coleta ORDER BY id ASC',
-            callback
-        );
+        const sql = `
+            SELECT
+                id,
+                nome,
+                ende AS \`end\`,
+                tel
+            FROM ponto_coleta
+            ORDER BY id ASC
+        `;
+
+        db.query(sql, callback);
     }
 
     buscarPorId(id, callback) {
-        db.query(
-            'SELECT * FROM ponto_coleta WHERE id = ?',
-            [id],
-            callback
-        );
+        const sql = `
+            SELECT
+                id,
+                nome,
+                ende AS \`end\`,
+                tel
+            FROM ponto_coleta
+            WHERE id = ?
+        `;
+
+        db.query(sql, [id], callback);
     }
 
     atualizar(ponto, callback) {
@@ -46,7 +59,7 @@ class PontoColetaDAO {
 
         const sql = `
             UPDATE ponto_coleta
-            SET nome = ?, \`end\` = ?, tel = ?
+            SET nome = ?, ende = ?, tel = ?
             WHERE id = ?
         `;
 
@@ -59,11 +72,12 @@ class PontoColetaDAO {
     }
 
     excluir(id, callback) {
-        db.query(
-            'DELETE FROM ponto_coleta WHERE id = ?',
-            [id],
-            callback
-        );
+        const sql = `
+            DELETE FROM ponto_coleta
+            WHERE id = ?
+        `;
+
+        db.query(sql, [id], callback);
     }
 }
 

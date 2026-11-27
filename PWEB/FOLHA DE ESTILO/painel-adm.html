@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -75,12 +74,12 @@
 
     <div class="card-stat">
       <small>Pontos de Coleta</small>
-      <div class="valor" id="statPontos">2</div>
+      <div class="valor" id="statPontos">0</div>
     </div>
 
     <div class="card-stat">
       <small>Recompensas</small>
-      <div class="valor" id="statItens">3</div>
+      <div class="valor" id="statItens">0</div>
     </div>
 
   </div>
@@ -347,39 +346,8 @@
   const emailAdmin = localStorage.getItem('usuario_email');
 
   const pessoas = [];
-
-  const pontos = [
-    {
-      id: 1,
-      nome: 'Ecoponto Ponta Verde',
-      end: 'Av. Álvaro Otacílio, 400',
-      tel: '8233221100'
-    },
-    {
-      id: 2,
-      nome: 'Cooperativa Benedito Bentes',
-      end: 'Av. Cachoeira do Meirim, 85',
-      tel: '8233445566'
-    }
-  ];
-
-  const recompensas = [
-    {
-      cod_recomp: 'REC001',
-      catalogo: 'Ecobag CoopRecicla',
-      registro_pontos: 150
-    },
-    {
-      cod_recomp: 'REC002',
-      catalogo: 'Kit Mudas Orgânicas',
-      registro_pontos: 100
-    },
-    {
-      cod_recomp: 'REC003',
-      catalogo: 'Vale-Compras R$ 25,00',
-      registro_pontos: 400
-    }
-  ];
+  const pontos = [];
+  const recompensas = [];
 
 
   // =====================================
@@ -476,9 +444,8 @@
     document.getElementById('userEmail').textContent =
       emailAdmin || 'E-mail não encontrado';
 
-    renderizarPontos();
-    renderizarRecompensas();
-
+    carregarPontos();
+    carregarRecompensas();
     carregarUsuarios();
   }
 
@@ -623,35 +590,90 @@
 
 
   // =====================================
-  // PONTOS DE COLETA
+  // PONTOS DE COLETA - MYSQL
   // =====================================
+
+  async function carregarPontos() {
+
+    const tabela = document.getElementById('tabelaPontos');
+
+    tabela.innerHTML =
+      '<tr><td colspan="5">Carregando pontos de coleta...</td></tr>';
+
+    try {
+
+      const resposta = await fetch(`${API}/pontos-coleta`);
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(
+          dados.mensagem || 'Não foi possível carregar os pontos.'
+        );
+      }
+
+      if (!Array.isArray(dados)) {
+        throw new Error('O servidor retornou uma lista de pontos inválida.');
+      }
+
+      pontos.length = 0;
+
+      dados.forEach(ponto => pontos.push({
+        id: ponto.id,
+        nome: ponto.nome,
+        end: ponto.end ?? ponto.ende ?? '',
+        tel: ponto.tel || ''
+      }));
+
+      renderizarPontos();
+
+    } catch (erro) {
+
+      console.error('Erro ao carregar pontos:', erro);
+
+      tabela.innerHTML = `
+        <tr>
+          <td colspan="5">${escaparHTML(erro.message)}</td>
+        </tr>
+      `;
+
+    }
+  }
+
 
   function renderizarPontos() {
 
     document.getElementById('statPontos').textContent =
       pontos.length;
 
-    document.getElementById('tabelaPontos').innerHTML =
-      pontos.map((pt, idx) => `
-        <tr>
-          <td>#${pt.id}</td>
-          <td><strong>${escaparHTML(pt.nome)}</strong></td>
-          <td>${escaparHTML(pt.end)}</td>
-          <td>${escaparHTML(pt.tel || '-')}</td>
-          <td>
-            <button
-              class="btn-sair"
-              style="padding:6px 10px;font-size:.8rem;"
-              onclick="removerPonto(${idx})">
-              Remover
-            </button>
-          </td>
-        </tr>
-      `).join('');
+    const tabela = document.getElementById('tabelaPontos');
+
+    if (pontos.length === 0) {
+      tabela.innerHTML =
+        '<tr><td colspan="5">Nenhum ponto de coleta cadastrado.</td></tr>';
+      return;
+    }
+
+    tabela.innerHTML = pontos.map(pt => `
+      <tr>
+        <td>#${escaparHTML(pt.id)}</td>
+        <td><strong>${escaparHTML(pt.nome)}</strong></td>
+        <td>${escaparHTML(pt.end)}</td>
+        <td>${escaparHTML(pt.tel || '-')}</td>
+        <td>
+          <button
+            type="button"
+            class="btn-sair"
+            style="padding:6px 10px;font-size:.8rem;"
+            onclick="removerPonto(${Number(pt.id)})">
+            Remover
+          </button>
+        </td>
+      </tr>
+    `).join('');
   }
 
 
-  function adicionarPonto(e) {
+  async function adicionarPonto(e) {
 
     e.preventDefault();
 
@@ -664,65 +686,213 @@
       return;
     }
 
-    pontos.push({
-      id: pontos.length
-        ? Math.max(...pontos.map(p => p.id)) + 1
-        : 1,
-      nome,
-      end: endereco,
-      tel
-    });
+    try {
 
-    e.target.reset();
+      const resposta = await fetch(`${API}/pontos-coleta`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          nome,
+          end: endereco,
+          tel,
+          adminCpf
+        })
+      });
 
-    renderizarPontos();
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(
+          dados.mensagem || 'Não foi possível cadastrar o ponto.'
+        );
+      }
+
+      e.target.reset();
+
+      await carregarPontos();
+
+      alert('Ponto de coleta cadastrado com sucesso!');
+
+    } catch (erro) {
+
+      console.error('Erro ao cadastrar ponto:', erro);
+      alert(erro.message);
+
+    }
   }
 
 
-  function removerPonto(index) {
+  async function removerPonto(id) {
 
-    if (!pontos[index]) return;
+    const ponto = pontos.find(
+      pt => Number(pt.id) === Number(id)
+    );
 
-    if (confirm(`Remover o ponto "${pontos[index].nome}"?`)) {
-      pontos.splice(index, 1);
-      renderizarPontos();
+    if (!ponto) return;
+
+    if (!confirm(`Remover o ponto "${ponto.nome}"?`)) return;
+
+    try {
+
+      const resposta = await fetch(
+        `${API}/pontos-coleta/${encodeURIComponent(id)}?adminCpf=${encodeURIComponent(adminCpf)}`,
+        {
+          method: 'DELETE'
+        }
+      );
+
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(
+          dados.mensagem || 'Não foi possível remover o ponto.'
+        );
+      }
+
+      await carregarPontos();
+
+      alert('Ponto de coleta removido com sucesso!');
+
+    } catch (erro) {
+
+      console.error('Erro ao remover ponto:', erro);
+      alert(erro.message);
+
     }
   }
 
 
   // =====================================
-  // RECOMPENSAS
+  // RECOMPENSAS - MYSQL
   // =====================================
+
+  async function carregarRecompensas() {
+
+    const tabela = document.getElementById('tabelaRecompensas');
+
+    tabela.innerHTML =
+      '<tr><td colspan="4">Carregando recompensas...</td></tr>';
+
+    try {
+
+      const resposta = await fetch(`${API}/recompensas`);
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(
+          dados.mensagem || 'Não foi possível carregar as recompensas.'
+        );
+      }
+
+      if (!Array.isArray(dados)) {
+        throw new Error('O servidor retornou uma lista de recompensas inválida.');
+      }
+
+      recompensas.length = 0;
+
+      dados.forEach(recompensa => recompensas.push({
+        cod_recomp: recompensa.cod_recomp,
+        catalogo: recompensa.catalogo,
+        registro_pontos: Number(recompensa.registro_pontos)
+      }));
+
+      renderizarRecompensas();
+
+    } catch (erro) {
+
+      console.error('Erro ao carregar recompensas:', erro);
+
+      tabela.innerHTML = `
+        <tr>
+          <td colspan="4">${escaparHTML(erro.message)}</td>
+        </tr>
+      `;
+
+    }
+  }
+
 
   function renderizarRecompensas() {
 
     document.getElementById('statItens').textContent =
       recompensas.length;
 
-    document.getElementById('tabelaRecompensas').innerHTML =
-      recompensas.map((rec, idx) => `
-        <tr>
-          <td><strong>${escaparHTML(rec.cod_recomp)}</strong></td>
-          <td>${escaparHTML(rec.catalogo)}</td>
-          <td>
-            <span class="badge badge-entrada">
-              ${Number(rec.registro_pontos)} pts
-            </span>
-          </td>
-          <td>
-            <button
-              class="btn-sair"
-              style="padding:6px 10px;font-size:.8rem;"
-              onclick="removerRecompensa(${idx})">
-              Remover
-            </button>
-          </td>
-        </tr>
-      `).join('');
+    const tabela = document.getElementById('tabelaRecompensas');
+
+    if (recompensas.length === 0) {
+      tabela.innerHTML =
+        '<tr><td colspan="4">Nenhuma recompensa cadastrada.</td></tr>';
+      return;
+    }
+
+    tabela.innerHTML = recompensas.map(rec => `
+      <tr>
+        <td><strong>${escaparHTML(rec.cod_recomp)}</strong></td>
+        <td>${escaparHTML(rec.catalogo)}</td>
+        <td>
+          <span class="badge badge-entrada">
+            ${Number(rec.registro_pontos)} pts
+          </span>
+        </td>
+        <td>
+          <button
+            type="button"
+            class="btn-sair"
+            style="padding:6px 10px;font-size:.8rem;"
+            onclick="removerRecompensa('${escaparHTML(rec.cod_recomp)}')">
+            Remover
+          </button>
+        </td>
+      </tr>
+    `).join('');
   }
 
 
-  function adicionarRecompensa(e) {
+  function gerarCodigoRecompensa() {
+
+    const codigosUsados = new Set(
+      recompensas.map(r => String(r.cod_recomp))
+    );
+
+    let maiorNumero = 0;
+
+    recompensas.forEach(recompensa => {
+
+      const correspondencia =
+        String(recompensa.cod_recomp).match(/^REC(\d+)$/i);
+
+      if (correspondencia) {
+        maiorNumero = Math.max(
+          maiorNumero,
+          Number(correspondencia[1])
+        );
+      }
+
+    });
+
+    let numero = maiorNumero + 1;
+
+    let codigo =
+      `REC${String(numero).padStart(6, '0')}`;
+
+    while (codigosUsados.has(codigo)) {
+      numero++;
+      codigo = `REC${String(numero).padStart(6, '0')}`;
+    }
+
+    if (codigo.length > 9) {
+      throw new Error(
+        'Não foi possível gerar um código de recompensa disponível.'
+      );
+    }
+
+    return codigo;
+  }
+
+
+  async function adicionarRecompensa(e) {
 
     e.preventDefault();
 
@@ -737,27 +907,82 @@
       return;
     }
 
-    const numero = recompensas.length + 1;
+    try {
 
-    recompensas.push({
-      cod_recomp: 'REC' + String(numero).padStart(3, '0'),
-      catalogo,
-      registro_pontos: valor
-    });
+      const cod_recomp = gerarCodigoRecompensa();
 
-    e.target.reset();
+      const resposta = await fetch(`${API}/recompensas`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          cod_recomp,
+          catalogo,
+          registro_pontos: valor,
+          adminCpf
+        })
+      });
 
-    renderizarRecompensas();
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(
+          dados.mensagem || 'Não foi possível cadastrar a recompensa.'
+        );
+      }
+
+      e.target.reset();
+
+      await carregarRecompensas();
+
+      alert('Recompensa cadastrada com sucesso!');
+
+    } catch (erro) {
+
+      console.error('Erro ao cadastrar recompensa:', erro);
+      alert(erro.message);
+
+    }
   }
 
 
-  function removerRecompensa(index) {
+  async function removerRecompensa(codigo) {
 
-    if (!recompensas[index]) return;
+    const recompensa = recompensas.find(
+      rec => String(rec.cod_recomp) === String(codigo)
+    );
 
-    if (confirm(`Remover "${recompensas[index].catalogo}"?`)) {
-      recompensas.splice(index, 1);
-      renderizarRecompensas();
+    if (!recompensa) return;
+
+    if (!confirm(`Remover "${recompensa.catalogo}"?`)) return;
+
+    try {
+
+      const resposta = await fetch(
+        `${API}/recompensas/${encodeURIComponent(codigo)}?adminCpf=${encodeURIComponent(adminCpf)}`,
+        {
+          method: 'DELETE'
+        }
+      );
+
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(
+          dados.mensagem || 'Não foi possível remover a recompensa.'
+        );
+      }
+
+      await carregarRecompensas();
+
+      alert('Recompensa removida com sucesso!');
+
+    } catch (erro) {
+
+      console.error('Erro ao remover recompensa:', erro);
+      alert(erro.message);
+
     }
   }
 
